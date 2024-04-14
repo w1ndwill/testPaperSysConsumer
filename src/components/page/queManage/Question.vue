@@ -516,10 +516,10 @@ export default {
                         this.tableData = res.dataList;
                         this.pageTotal = res.pageTotal || 0;
                     } else {
-                        this.tableData = res.dataList.filter((item) => { //普通用户
-                            console.log('userName==>', userName);
-                            console.log('queCreateBy==>', item.queCreateBy);
-                            return item.queCreateBy === userId; // 只显示自己创建的题目
+                        this.tableData = res.dataList.filter((item1) => { //普通用户
+                            console.log('item1.queCreateBy', item1.queCreateBy);
+                            console.log('userId', userId);
+                            return item1.queCreateBy === userId; // 只显示自己创建的题目
                         });
                         this.pageTotal = this.tableData.length; //总数
                     }

@@ -7,7 +7,7 @@ export default {
       return localStorage.getItem('isAdmin') === '管理员'
     },
     getUserId() {
-      return localStorage.getItem('ms_userId');
+      return localStorage.getItem('userId');
     }
   }
 }

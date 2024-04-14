@@ -232,7 +232,6 @@ export default {
                     let isAdmin = this.getIsAdmin(); //是否是管理员
                     let userName = this.getUserName(); //当前登录用户
                     if (isAdmin) { //管理员
-                        console.log('管理员的题库');
                         this.tableData = res.dataList;
                         this.pageTotal = res.pageTotal || 0;
                     } else { // 普通用户
