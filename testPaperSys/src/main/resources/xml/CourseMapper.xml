@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gem.mapper.CourseMapper">
+
+    <select id="getCourseName" resultType="String">
+        select
+            c.course_name
+        form
+            course c,que_bank q
+        where
+            q.que_bank_id =#{queBankId}
+        and
+            c.course_id =q.que_bank_course_id
+    </select>
+</mapper>

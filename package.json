@@ -1,0 +1,38 @@
+{
+  "name": "test_paper_sys",
+  "version": "4.2.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run serve",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "babel-polyfill": "^6.26.0",
+    "docxtemplater": "^3.20.1",
+    "docxtemplater-image-module-free": "^1.1.1",
+    "echarts": "^5.0.1",
+    "echarts-liquidfill": "^3.0.0",
+    "element-ui": "^2.11.0",
+    "file-saver": "^2.0.5",
+    "js-md5": "^0.7.3",
+    "jszip": "^3.6.0",
+    "jszip-utils": "^0.1.0",
+    "mavon-editor": "^2.6.17",
+    "pizzip": "^3.0.6",
+    "vue": "^2.6.10",
+    "vue-count-to": "^1.0.13",
+    "vue-cropperjs": "^3.0.0",
+    "vue-i18n": "^8.10.0",
+    "vue-quill-editor": "^3.0.6",
+    "vue-router": "^3.0.3",
+    "vue-schart": "^2.0.0",
+    "vuedraggable": "^2.17.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.9.0",
+    "@vue/cli-service": "^3.9.0",
+    "vue-template-compiler": "^2.6.10"
+  }
+}
