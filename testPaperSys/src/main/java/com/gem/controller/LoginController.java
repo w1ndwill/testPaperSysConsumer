@@ -99,7 +99,7 @@ public class LoginController {
 	 * @return
 	 */
 	@PostMapping("/register")
-	public void getCourse(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException {
+	public void getCourse(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException { //注册 重定向到添加用户
 		request.getRequestDispatcher("/user/add").forward(request , response);
 	}
 }

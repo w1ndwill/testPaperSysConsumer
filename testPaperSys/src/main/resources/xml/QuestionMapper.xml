@@ -2,4 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gem.mapper.QuestionMapper">
 
+    <select id="getQuestion" resultType="com.gem.entity.Question">
+        select
+            *
+        from
+            question
+        where
+            createID =#{queId}
+    </select>
 </mapper>

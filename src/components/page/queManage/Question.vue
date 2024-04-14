@@ -510,8 +510,19 @@ export default {
                             }
                         });
                     }
-                    this.tableData = res.dataList;
-                    this.pageTotal = res.pageTotal || 0;
+                    let userId = this.getUserId(); //用户id
+                    let isAdmin = this.getIsAdmin(); //是否是管理员
+                    if (isAdmin) { //管理员
+                        this.tableData = res.dataList;
+                        this.pageTotal = res.pageTotal || 0;
+                    } else {
+                        this.tableData = res.dataList.filter((item) => { //普通用户
+                            console.log('userName==>', userName);
+                            console.log('queCreateBy==>', item.queCreateBy);
+                            return item.queCreateBy === userId; // 只显示自己创建的题目
+                        });
+                        this.pageTotal = this.tableData.length; //总数
+                    }
 
                     if (this.tableData.length === 0 && this.query.page !== 1) {
                         this.query.page = 1;
@@ -594,7 +605,7 @@ export default {
             this.getData();
         },
         //添加按钮
-        addQuestionDialog() {
+        addQuestionDialog() { // 添加按钮
             this.title = '添加题目';
             this.question = {};
             // this.question.queDifficulty = 5
@@ -645,7 +656,7 @@ export default {
          */
         addQuestion() {
             this.question.knowledgeIds = this.knowledgeIdList;
-            add(this.getQuestion(this.question))
+            add(this.getQuestion(this.question)) // 获取实体类对象
                 .then((res) => {
                     if (res.success) {
                         this.queVisible = false;
@@ -664,7 +675,7 @@ export default {
                         // });
                         // this.question.queCreateByName = localStorage.getItem('ms_username');
                         // this.tableData.push(this.question);
-                        this.pageTotal++;
+                        this.pageTotal++; // 添加成功后总数加1
                         // this.question = {};
                     } else {
                         this.$message.warning(res.msg);
@@ -688,7 +699,7 @@ export default {
             obj.knowledgeIds = question.knowledgeIds;
             obj.queAnswer = question.queAnswer;
             obj.queAnswerDescribe = question.queAnswerDescribe;
-            obj.queCreateBy = localStorage.getItem('userId');
+            obj.queCreateBy = question.queCreateBy;
             obj.queA = question.queA;
             obj.queB = question.queB;
             obj.queC = question.queC;

@@ -75,7 +75,7 @@ public class QuestionController {
 	 */
 	@PostMapping("/add")
 	public Map< String, Object > addQuestionVo(@RequestBody QuestionVo questionVo) {
-		HashMap< String, Object > map = new HashMap< String, Object >();
+		HashMap< String, Object > map = new HashMap< String, Object >(); // 返回的数据
 		if ( questionVo == null ) {
 			map.put("success" , false);
 			map.put("msg" , "数据丢失,添加失败!");

@@ -89,7 +89,7 @@ export default {
                         background: 'rgba(0, 0, 0, 0.7)'
                     });
                     this.temPsw = this.user.password;
-                    this.user.password = md5(this.user.password);
+                    this.user.password = md5(this.user.password); // 密码加密
                     register(this.user)
                         .then((res) => {
                             if (res.success) {

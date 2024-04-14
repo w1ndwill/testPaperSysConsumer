@@ -169,7 +169,7 @@ export default {
             rules,
             loading: true,
             query: {
-                userId: localStorage.getItem('userId'),
+                userId: localStorage.getItem('userId'), //当前用户ID
                 queBankCourseId: '',
                 queBankName: '',
                 page: 1,
@@ -224,13 +224,23 @@ export default {
                             type: 'error',
                             confirmButtonText: '确定',
                             callback: (action) => {
-                                localStorage.removeItem('ms_username');
+                                localStorage.removeItem('ms_username'); //清除用户名
                                 this.$router.push('/login');
                             }
                         });
                     }
-                    this.tableData = res.dataList;
-                    this.pageTotal = res.pageTotal || 0;
+                    let isAdmin = this.getIsAdmin(); //是否是管理员
+                    let userName = this.getUserName(); //当前登录用户
+                    if (isAdmin) { //管理员
+                        console.log('管理员的题库');
+                        this.tableData = res.dataList;
+                        this.pageTotal = res.pageTotal || 0;
+                    } else { // 普通用户
+                        this.tableData = res.dataList.filter((item) => { // 过滤
+                            return item.createBy === userName; //创建人等于当前用户ID
+                        });
+                        this.pageTotal = this.tableData.length; //总数
+                    }
                 })
                 .catch(() => {
                     this.loading = false;
@@ -271,7 +281,7 @@ export default {
 
         // 保存编辑
         save() {
-            this.$refs['queBank'].validate((chek) => {
+            this.$refs['queBank'].validate((chek) => { // 校验
                 if (chek) {
                     if (this.title === '添加题库') {
                         this.addQueBank();
@@ -301,11 +311,12 @@ export default {
         },
         getQueBank(queBank) {
             let obj = new Object();
-            obj.queBankId = queBank.queBankId;
-            obj.queBankName = queBank.queBankName;
-            obj.courseId = queBank.courseId;
-            obj.queBankDescribe = queBank.queBankDescribe;
-            obj.createBy = localStorage.getItem('userId');
+            obj.queBankId = queBank.queBankId; //题库ID
+            obj.queBankName = queBank.queBankName; //题库名
+            obj.courseId = queBank.courseId; //课程ID
+            obj.queBankDescribe = queBank.queBankDescribe; //描述
+            obj.createBy = queBank.createBy; //创建人
+            // obj.createBy = queBank.getItem('userId'); //创建人
             return obj;
         },
         editQueBank() {
@@ -322,7 +333,7 @@ export default {
              *
              * 解绑
              */
-            if (this.isUntieQuestion) {
+            if (this.isUntieQuestion) { //解绑
                 this.isUntieQuestion = false;
                 this.UntieQuestion();
             }

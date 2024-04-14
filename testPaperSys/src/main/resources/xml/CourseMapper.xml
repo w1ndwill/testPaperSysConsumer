@@ -2,14 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gem.mapper.CourseMapper">
 
-    <select id="getCourseName" resultType="String">
+    <select id="getMyQue" resultType="String">
         select
-            c.course_name
-        form
-            course c,que_bank q
+            q.que_create_by
+        from
+            user u, question q, course c
         where
-            q.que_bank_id =#{queBankId}
+            q.que_create_by =#{queBankId} = u.user_id
         and
-            c.course_id =q.que_bank_course_id
+            c.course_id =q.que_course_id
     </select>
+
 </mapper>

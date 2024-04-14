@@ -79,7 +79,7 @@ public class UserVo {
 		return userVoList;
 	}
 	
-	public static UserVo getUserVO(User user) {
+	public static UserVo getUserVO(User user) {  // 1
 		if ( user == null ) {
 			return null;
 		}
