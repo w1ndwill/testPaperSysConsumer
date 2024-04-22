@@ -20,6 +20,6 @@ module.exports = {
         hot: true, // 实时打包编译
         host: '0.0.0.0',
         inline: true,  // 表示实时刷新浏览器
-        port: '80'   // 指定打开浏览器的端口号
+        port: '80',   // 指定打开浏览器的端口号
     }
 }

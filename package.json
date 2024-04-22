@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run serve",
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --host localhost",
     "build": "vue-cli-service build"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "jszip": "^3.6.0",
     "jszip-utils": "^0.1.0",
     "mavon-editor": "^2.6.17",
+    "pem-jwk": "^2.0.0",
     "pizzip": "^3.0.6",
     "vue": "^2.6.10",
     "vue-count-to": "^1.0.13",

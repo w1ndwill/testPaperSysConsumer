@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gem.mapper.KeyMapper">
+    <insert id="insertKey">
+        INSERT INTO `key` (public_key, key_owner)
+        VALUES (#{publicKey}, #{keyOwner})
+    </insert>
+
+    <select id="selectKeyByOwner" resultType="com.gem.entity.Key">
+        SELECT * FROM `key`
+        WHERE key_owner = #{keyOwner}
+    </select>
+
+    <update id="updateKey">
+        UPDATE paperSys.`key` SET public_key = #{publicKey} WHERE key_owner = #{keyOwner}
+    </update>
+
+    <select id="selectAllKeys" resultType="com.gem.entity.Key">
+        SELECT * FROM `key`
+    </select>
+
+</mapper>

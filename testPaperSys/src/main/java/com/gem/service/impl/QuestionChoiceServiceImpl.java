@@ -18,8 +18,6 @@ import java.util.List;
  * 服务实现类
  * </p>
  *
- * @author 2536320610@qq.com
- * @since 2021-01-21
  */
 @Service
 public class QuestionChoiceServiceImpl extends ServiceImpl< QuestionChoiceMapper, QuestionChoice > implements QuestionChoiceService {

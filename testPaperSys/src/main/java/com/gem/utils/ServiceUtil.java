@@ -43,6 +43,9 @@ public class ServiceUtil {
 	
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private KeyService keyService;
 	
 	/**
 	 * 初始化该工具类
@@ -146,6 +149,18 @@ public class ServiceUtil {
 		knowledgeQueryWrapper.in("knowledge_id", StringUtil.arrStrToList(tpKnowledgeIds));
 		return serviceUtil.knowledgeService.list(knowledgeQueryWrapper);
 	}
-	
+
+	/**
+	 * 通过 ids 获取密钥
+	 * @param tpQuestionIds
+	 * @return
+	 */
+//	public static List< String > getKeyByIds(String tpQuestionIds) {
+//
+//	}
+
+
+
+
 	
 }

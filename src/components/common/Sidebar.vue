@@ -115,10 +115,11 @@ export default {
                     title: '试卷管理'
                 },
                 {
-                    icon: 'el-icon-pie-chart', //图标
-                    index: 'courseChart',
-                    title: '课程分析'
+                    icon: 'el-icon-document-checked',
+                    index: 'check',
+                    title: '试卷审核'
                 },
+
                 {
                     icon: 'el-icon-lx-settings', //图标
                     index: 'setting',
@@ -133,6 +134,11 @@ export default {
                             icon: 'el-icon-lx-home', //图标
                             index: 'info',
                             title: '个人信息'
+                        },
+                        {
+                            icon: 'el-icon-lx-home', //图标
+                            index: 'key',
+                            title: '密钥设置'
                         },
                         {
                             icon: 'el-icon-lx-roundclose',

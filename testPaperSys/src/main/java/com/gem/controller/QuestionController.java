@@ -26,8 +26,6 @@ import java.util.*;
  * 前端控制器
  * </p>
  *
- * @author 2536320610@qq.com
- * @since 2021-01-21
  */
 @RestController
 @CrossOrigin  //解决跨域问题

@@ -208,7 +208,7 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="pagination">
+            <div class="pagination"> <!-- 分页 -->
                 <el-pagination
                     background
                     layout="total, sizes, prev, pager, next, jumper"
@@ -512,17 +512,12 @@ export default {
                     }
                     let userId = this.getUserId(); //用户id
                     let isAdmin = this.getIsAdmin(); //是否是管理员
-                    if (isAdmin) { //管理员
-                        this.tableData = res.dataList;
-                        this.pageTotal = res.pageTotal || 0;
-                    } else {
-                        this.tableData = res.dataList.filter((item1) => { //普通用户
-                            console.log('item1.queCreateBy', item1.queCreateBy);
-                            console.log('userId', userId);
-                            return item1.queCreateBy === userId; // 只显示自己创建的题目
-                        });
-                        this.pageTotal = this.tableData.length; //总数
-                    }
+                    this.tableData = res.dataList.filter((item1) => { //普通用户
+                        console.log('item1.queCreateBy', item1.queCreateBy);
+                        console.log('userId', userId);
+                        return item1.queCreateBy === userId; // 只显示自己创建的题目
+                    });
+                    this.pageTotal = this.tableData.length; //总数
 
                     if (this.tableData.length === 0 && this.query.page !== 1) {
                         this.query.page = 1;

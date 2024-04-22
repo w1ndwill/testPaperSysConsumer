@@ -35,4 +35,12 @@ public class TableVo< T > {
 		this.dataList = dataList;
 		this.pageTotal = pageTotal;
 	}
+
+	public List<T> getData() {
+		return dataList;
+	}
+
+	public long getTotal() {
+		return pageTotal;
+	}
 }

@@ -25,7 +25,7 @@ const i18n = new VueI18n({
 router.beforeEach((to, from, next) => {
     // 设置动态网页标题
     document.title = `${to.meta.title}`;
-    const role = localStorage.getItem('ms_username');
+    const role = localStorage.getItem('ms_username'); // 从localStorage中获取用户名
 
     if(!role){
         if(to.path === '/register' || to.path === '/login' || to.path === '/forgetPsw'){

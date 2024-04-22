@@ -13,4 +13,22 @@
             c.course_id =q.que_course_id
     </select>
 
+    <select id="getCourseId" resultType="String">
+        select
+            course_id
+        from
+            course
+        where
+            course_name =#{courseName}
+    </select>
+
+    <select id="getCourseName" resultType="String">
+        select
+            course_name
+        from
+            course
+        where
+            course_id =#{courseId}
+    </select>
+
 </mapper>

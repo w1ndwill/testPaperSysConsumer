@@ -160,10 +160,15 @@ export default new Router({
                     meta: { title: '403' }
                 },
                 {
-                    path: '/donate',
-                    component: () => import(/* webpackChunkName: "donate" */ '../components/examplePage/Donate.vue'),
-                    meta: { title: '支持作者' }
-                }
+                    path: '/key',
+                    component: () => import(/* webpackChunkName: "donate" */ '../components/page/userManage/Key_Manage.vue'),
+                    meta: { title: '密钥管理' }
+                },
+                {
+                    path: '/check',
+                    component: () => import(/* webpackChunkName: "donate" */ '../components/page/check.vue'),
+                    meta: { title: '试卷审核' }
+                },
             ]
         },
         {

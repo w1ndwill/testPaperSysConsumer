@@ -69,7 +69,7 @@ public class User implements Serializable {
     /**
      * 创建时间
      */
-      @TableField(fill = FieldFill.INSERT)
+      @TableField(fill = FieldFill.INSERT) // 自动填充
     private Date createTime;
 
 

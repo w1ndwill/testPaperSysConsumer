@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Date : 2021/1/21 10:49
  * package: com.gem.vo
  * ClassName : UserVo
  * 描述: UserVO对象

@@ -122,7 +122,7 @@
         </div>
 
         <!-- queBank弹出框 -->
-        <el-dialog v-dialogDrag :title="title" :visible.sync="queBankVisible" width="50%" center :close-on-click-modal="false">
+        <el-dialog v-dialog-drag :title="title" :visible.sync="queBankVisible" width="50%" center :close-on-click-modal="false">
             <el-form ref="queBank" :model="queBank" label-width="100px">
                 <el-form-item label="题库名:" prop="queBankName" :rules="rules.Required">
                     <el-input v-model="queBank.queBankName" placeholder="请输入题库名"></el-input>
@@ -231,15 +231,10 @@ export default {
                     }
                     let isAdmin = this.getIsAdmin(); //是否是管理员
                     let userName = this.getUserName(); //当前登录用户
-                    if (isAdmin) { //管理员
-                        this.tableData = res.dataList;
-                        this.pageTotal = res.pageTotal || 0;
-                    } else { // 普通用户
-                        this.tableData = res.dataList.filter((item) => { // 过滤
-                            return item.createBy === userName; //创建人等于当前用户ID
-                        });
-                        this.pageTotal = this.tableData.length; //总数
-                    }
+                    this.tableData = res.dataList.filter((item) => { // 过滤
+                        return item.createBy === userName; //创建人等于当前用户ID
+                    });
+                    this.pageTotal = this.tableData.length; //总数
                 })
                 .catch(() => {
                     this.loading = false;

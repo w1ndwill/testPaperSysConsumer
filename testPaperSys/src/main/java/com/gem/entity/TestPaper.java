@@ -17,10 +17,10 @@ import java.util.Date;
  *
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false)  //重写equals和hashcode方法
 public class TestPaper implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;  //序列化
 
     /**
      * 试卷id

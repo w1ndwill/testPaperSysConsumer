@@ -52,6 +52,22 @@
                 </el-col>
             </el-row>
         </el-dialog>
+        <!-- 添加生成密钥弹出框 -->
+        <el-dialog :visible.sync="keyDialogVisible" title="系统为您自动生成的RSA密钥对为：">
+            <div>
+                <h3>您的公钥为：</h3>
+                <el-input
+                    type="textarea"
+                    :rows="4"
+                    :value="keyPair.publicKey"
+                    auto-complete="off"
+                ></el-input>
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="danger" @click="savePrivateKey">保存私钥</el-button>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -60,6 +76,8 @@
 import { register } from '@/api/login';
 import md5 from 'js-md5';
 import rules from '@/utils/rules';
+import {generate} from '@/api/Key';
+
 export default {
     // components: {
     //     userPhoto
@@ -75,7 +93,12 @@ export default {
                 // sex: ''
             },
             temPsw: '',
-            loading: false
+            loading: false,
+            keyDialogVisible: false,
+            keyPair: {
+                publicKey: '',
+                privateKey: '',
+            }
         };
     },
     methods: {
@@ -93,12 +116,16 @@ export default {
                     register(this.user)
                         .then((res) => {
                             if (res.success) {
+                                this.generateKeyPair();
+                                let keyOwner = this.user.userName;
+                                generate(keyOwner);
                                 this.loading.close();
-                                this.$confirm('注册成功,是否立即跳转到登录?', '信息', {
-                                    type: 'success'
-                                }).then(() => {
-                                    this.$router.push('/login');
-                                });
+
+                                // this.$confirm('注册成功,是否立即跳转到登录?', '信息', {
+                                //     type: 'success'
+                                // }).then(() => {
+                                //     this.$router.push('/login');
+                                // });
                             } else {
                                 this.user.password = this.temPsw;
                                 this.$message(res.msg);
@@ -110,6 +137,78 @@ export default {
                             this.loading.close();
                         });
                 }
+            });
+        },
+        async generateKeyPair() {
+            let keyOwner = this.user.userName; // 假设你将用户名存储在localStorage的'username'键下
+            try {
+                let res = await generate(keyOwner); // 调用后端接口生成密钥对
+                console.log("res:"+res)
+                console.log("res.data:"+res.data)
+                console.log("res && res.data:"+res && res.data)
+                if (res) { // 如果请求成功
+                    this.keyPair.publicKey = res.publicKey; // 保存公钥
+                    this.keyPair.privateKey = res.privateKey; // 保存私钥
+                    console.log("公钥：", this.keyPair.publicKey);
+                    this.keyDialogVisible = true; // 显示弹出框
+                } else {
+
+                    this.$message({
+                        message: '未知错误',
+                        type: 'error',
+                    });
+                }
+            } catch (error) {
+                console.error('Error generating key pair:', error);
+                this.$message({
+                    message: '生成密钥对时出错',
+                    type: 'error',
+                });
+            }
+        },
+        // 保存私钥
+        savePrivateKey() {
+            this.$confirm('私钥非常重要，请勿将私钥置于电脑桌面等显眼位置！', '警告', {
+                confirmButtonText: '我已知晓',
+                type: 'warning'
+            }).then(() => {
+                // 创建一个 Blob 对象，内容是私钥
+                let blob = new Blob([this.keyPair.privateKey], {type: "text/plain;charset=utf-8"});
+
+                // 创建一个指向 Blob 对象的 URL
+                let url = window.URL.createObjectURL(blob);
+
+                // 创建一个隐藏的 <a> 标签，设置 href 为 Blob URL，并设置下载的文件名
+                let link = document.createElement('a');
+                link.href = url;
+                link.download = 'privateKey.pem';
+                link.style.display = 'none';
+
+                // 将 <a> 标签添加到 DOM 中
+                document.body.appendChild(link);
+
+                // 触发点击事件来开始下载
+                link.click();
+
+                // 下载完成后，移除 <a> 标签
+                document.body.removeChild(link);
+
+                this.$message({
+                    message: '私钥保存成功',
+                    type: 'success',
+                });
+                this.keyDialogVisible = false;
+
+                this.$confirm('注册成功,是否立即跳转到登录?', '信息', {
+                    type: 'success'
+                }).then(() => {
+                    this.$router.push('/login');
+                });
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '下载失败',
+                });
             });
         }
     }
@@ -178,5 +277,10 @@ export default {
     font-size: 12px;
     line-height: 30px;
     color: #fff;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: center;
 }
 </style>
