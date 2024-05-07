@@ -82,7 +82,6 @@ import {jwk2pem} from 'pem-jwk';
 import AsToWord from '@/utils/AsToWord';
 import power from '@/utils/power';
 import rules from '@/utils/rules';
-import axios from 'axios';
 
 export default {
     data() {

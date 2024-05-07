@@ -45,13 +45,13 @@
                             :value="course.courseId"
                         ></el-option>
                     </el-select>
-<!--                    <el-checkbox-->
-<!--                        border-->
-<!--                        label="自己创建的"-->
-<!--                        class="handle-select mr8 query-margin"-->
-<!--                        @change="handleSearch"-->
-<!--                        v-model="isMy"-->
-<!--                    ></el-checkbox>-->
+                    <el-checkbox
+                        border
+                        label="自己创建的"
+                        class="handle-select mr8 query-margin"
+                        @change="handleSearch"
+                        v-model="isMy"
+                    ></el-checkbox>
                     <el-input
                         @keyup.enter.native="handleSearch"
                         class="handle-input mr10"
@@ -370,13 +370,13 @@ import power from '@/utils/power';
 import showKnowledge from './CourseManage/showKnowledge';
 import rules from '@/utils/rules';
 export default {
-    mixins: [AsToWord, power], // 权限控制
-    components: { // 引入组件
+    mixins: [AsToWord, power],
+    components: {
         question,
         showKnowledge
     },
     watch: {
-        tpVisible() { // 监听弹出框是否显示
+        tpVisible() {
             this.$nextTick(() => {
                 this.$refs['tp'].clearValidate();
             });
@@ -405,7 +405,6 @@ export default {
             delList: [],
             tpVisible: false,
             tpExamoleVisible: false,
-            tpCreateBy: localStorage.getItem('userId'),
             title: '',
             pageTotal: 0,
             form: {},
@@ -439,23 +438,10 @@ export default {
                             }
                         });
                     }
-
-                    let userId = this.getUserId();
-                    let userName = this.getUserName();
-                    let isAdmin = this.getIsAdmin();
-                    this.tableData = res.dataList.filter((item2) => {
-                        console.log('item2.tpCreateByName', item2.tpCreateByName);
-                        console.log('userId', userId);
-                        return item2.tpCreateByName === userName;
-                    });
-                    this.pageTotal = this.tableData.length;
-
-                    if (this.tableData.length === 0 && this.query.page !== 1) {
-                        this.query.page = 1;
-                        this.getData();
-                    }
+                    console.log("res.datalist"+res.dataList);
+                    this.tableData = res.dataList;
+                    this.pageTotal = res.pageTotal || 0;
                 })
-
                 .catch(() => {
                     this.loading = false;
                     this.$message.error('服务器歇菜了,请稍后再试!');
