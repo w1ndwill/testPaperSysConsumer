@@ -14,8 +14,8 @@
     <update id="editStatus" parameterType="com.gem.entity.PaperWd">
         UPDATE paper_wd
         SET pw_status = #{status},
-            pw_describe = CONCAT(pw_describe, '\n', #{remark})
-
+            pw_describe = CONCAT(IFNULL(pw_describe, ''), '\n', #{remark}),
+            pw_key = #{paperKey}
         WHERE pw_id = #{paperId}
     </update>
 

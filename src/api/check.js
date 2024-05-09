@@ -48,3 +48,11 @@ export function check( params ) {
         data: params
     });
 }
+
+export function getPublicKey( username ) {
+    return request({
+        url: 'api/keys/getPublicKey',
+        method: 'post',
+        data:  {username}
+    });
+}

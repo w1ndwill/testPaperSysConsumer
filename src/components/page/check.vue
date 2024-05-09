@@ -11,6 +11,7 @@
                 header-cell-class-name="table-header"
                 ref="multipleTable"
                 v-loading="loading"
+                style="width: 92%"
             >
                 <el-table-column align="center" checked="true" type="selection" width="55"></el-table-column>
                 <el-table-column
@@ -32,21 +33,35 @@
                     align="center"
                     label="课程名称"
                     prop="pw_course"
-                    width="150"
+                    width="100"
                 ></el-table-column>
                 <el-table-column
                     :show-overflow-tooltip="true"
                     align="center"
                     label="申请人"
                     prop="pw_create_by"
-                    width="150"
+                    width="100"
+                ></el-table-column>
+                <el-table-column
+                    :show-overflow-tooltip="true"
+                    align="center"
+                    label="系级审核人"
+                    prop="pw_auditor1"
+                    width="100"
+                ></el-table-column>
+                <el-table-column
+                    :show-overflow-tooltip="true"
+                    align="center"
+                    label="院级审核人"
+                    prop="pw_auditor2"
+                    width="100"
                 ></el-table-column>
                 <el-table-column
                     :show-overflow-tooltip="true"
                     align="center"
                     label="审核状态"
                     prop="pw_status"
-                    width="100"
+                    width="150"
                 >
                     <template slot-scope="scope">
                         <el-tag v-if="scope.row.pw_status === '0'" type="info">待审核</el-tag>
@@ -61,8 +76,13 @@
                     align="center"
                     label="审核意见"
                     prop="pw_describe"
-                    width="150"
-                ></el-table-column>
+                    width="200"
+                >
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.pw_describe">{{ scope.row.pw_describe }}</span>
+                        <span v-else>等待审批</span>
+                    </template>
+                </el-table-column>
                 <el-table-column align="center" label="操作" width="150">
                     <template slot-scope="scope">
                         <el-dropdown
@@ -71,9 +91,9 @@
                                     操作<i class="el-icon-lx-qrcode"></i><i class="el-icon-caret-bottom el-icon--right"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item class="clearfix" v-if="getUserName() === scope.row.pw_auditor1 || scope.row.pw_auditor2">
+                                <el-dropdown-item class="clearfix" v-if="getUserName() === scope.row.pw_auditor1 || scope.row.pw_auditor2 && previewed">
                                     <el-button
-                                        @click="handlePreview(scope.row)"
+                                        @click="handlePreview(scope.row, )"
                                         class="btn-width"
                                         icon="el-icon-view"
                                         type="primary"
@@ -125,7 +145,7 @@
             center
             :close-on-click-modal="false"
         >
-            <el-form ref="form" :model="form" label-width="80px" >
+            <el-form ref="form" :model="form" label-width="m" >
                 <el-form-item label="系级审核">
                     <el-select
                         v-model="form.selectAuditor1"
@@ -200,9 +220,11 @@
 </template>
 
 <script>
-import { check, getAdminList, getCourse, query, save, uploadto_server } from '@/api/check';
+import { check, getAdminList, getCourse, query, save, uploadto_server,getPublicKey } from '@/api/check';
 import question from '@/components/page/queManage/Question.vue';
 import power from '@/utils/power';
+import JSEncrypt from 'jsencrypt';
+
 
 export default {
     mixins: [power],
@@ -234,9 +256,11 @@ export default {
             pageTotal : 0,
             checkVisible: false,
             approveDialogVisible: false,
+            previewed: '0',
             approveRemark: '',
             currentRow: {},
             approvedStatus: '',
+            decryptedAESKey: null,
             form : {
                 selectCourse: '',
                 selectAuditor1: '',
@@ -316,10 +340,6 @@ export default {
                     iv: iv,
                 };
                 this.encryptedFileBlob = new Blob([ciphertext]);
-                console.log("encryptedFileData"+JSON.stringify(this.encryptedFileData));
-                console.log('文件内容:', fileContentArrayBuffer);
-                console.log('key'+ crypto.subtle.exportKey('jwk', aesKey));
-                console.log('加密后的文件内容:', ciphertext);
                 this.form.file = this.encryptedFileData;
                 // // 假设 `encryptedFileData.encrypted` 是一个 ArrayBuffer 对象，表示加密后的文件内容
                 // const encryptedFileBlob = new Blob([this.encryptedFileData.encrypted]);
@@ -351,7 +371,6 @@ export default {
                 true, // 是否可导出（exportable）
                 ['encrypt', 'decrypt'] // 用途
             );
-            console.log("aesKey"+aesKey);
             return aesKey;
         },
         readFile (file) {
@@ -375,7 +394,8 @@ export default {
                 aesKey,
                 arrayBuffer
             );
-            const ivString = this.arrayBufferToBase64(iv.buffer);
+            const ivString = this.arrayBufferToBase64(iv);
+            console.log("ivString1:"+ivString)
             return { ciphertext, iv: ivString };
         },
 
@@ -397,10 +417,12 @@ export default {
 
         async handleSubmitAudit() { // 提交审核
             const { ciphertext, iv } = this.encryptedFileData;
-            console.log("iv"+iv);
             const key = this.encryptedFileData.key;
-            const paperkey = await this.getCryptoKeyString(key);
-
+            const paperkey1 = await this.getCryptoKeyString(key);
+            const publicKey = await this.getPublicKey(this.form.selectAuditor1);
+            const paperkey = await this.encryptAESKeyWithPublicKey(publicKey, paperkey1);
+            console.log("key:"+paperkey)
+            console.log("paperkey:"+paperkey)
             const papercreateBy = localStorage.getItem('ms_username');
             const papername = this.papername;
             const uploadResponse = await this.uploadToServer({
@@ -444,7 +466,60 @@ export default {
             return response;
         },
 
-        async save({ papername, papercreateBy, paperurl, paperkey, iv, auditor1, auditor2,  course, remark}) { // 保存文件信息
+        async getPublicKey(username) {
+            const response = await getPublicKey(username);
+            if (response != null) {
+                return response.publicKey;
+            } else {
+                console.log('获取公钥失败：', response.message);
+                return null;
+            }
+        },
+
+        async encryptAESKeyWithPublicKey(publicKey, aesKeyBaseUrl) {
+            const encrypt = new JSEncrypt();
+            encrypt.setPublicKey(publicKey);
+            const encryptedAESKey = encrypt.encrypt(aesKeyBaseUrl);
+            return encryptedAESKey;
+        },
+
+        // async encryptAESKeyWithRSA(aesKeyString, auditor) {
+        //     try {
+        //         const aesKeyArrayBuffer = this.base64UrlToArrayBuffer(aesKeyString);
+        //         console.log("aesKeyArrayBuffer:"+aesKeyArrayBuffer)
+        //         const publicKeyString = await this.getPublicKey(auditor);
+        //         const publicKey = await this.base64ToJwk(publicKeyString);
+        //         const keyData = await window.crypto.subtle.importKey( // 导入RSA公钥
+        //             'jwk',
+        //             publicKey,
+        //             {
+        //                 name: "RSA-OAEP",
+        //                 hash: {name: "SHA-256"}
+        //             },
+        //             true,
+        //             ['encrypt']
+        //         );
+        //         console.log("keyData:"+keyData)
+        //         try {
+        //             const encryptedKey = await window.crypto.subtle.encrypt( // 使用RSA公钥加密AES密钥
+        //                 {
+        //                     name: "RSA-OAEP",
+        //                 },
+        //                 keyData, // RSA公钥
+        //                 aesKeyArrayBuffer // AES密钥
+        //             );
+        //             console.log("encryptedKey:"+encryptedKey)
+        //             return encryptedKey;
+        //         } catch (encryptError) {
+        //             console.error('Encryption error:', encryptError);
+        //             console.log(encryptError.error)
+        //         }
+        //     } catch (error) {
+        //         console.error('Error:', error);
+        //     }
+        // },
+
+        async save({ papername, papercreateBy, paperurl, paperkey, iv, auditor1, auditor2,  course}) { // 保存文件信息
             const formData2 = new FormData();
             formData2.append('papername', papername);
             formData2.append('papercreateBy', papercreateBy);
@@ -460,6 +535,10 @@ export default {
         },
 
         handleCheck(row, approvedStatus) {
+            if (this.previewed !== '1') {
+                this.$message.error('请先预览试题');
+                return;
+            }
             this.approveDialogVisible = true;
             this.currentRow = row;
             this.approvedStatus = approvedStatus;
@@ -482,12 +561,18 @@ export default {
                 this.$message.error('你没有审批权限');
                 return;
             }
+            const publicKey = await this.getPublicKey(this.currentRow.pw_auditor2);
+            console.log("publicKey:"+publicKey)
+            console.log("decryptedAESKey:"+this.decryptedAESKey)
+            const encryptedAESKey = await this.encryptAESKeyWithPublicKey(publicKey, this.decryptedAESKey); // 使用公钥加密AES密钥
+            console.log("encryptedAESKey:"+encryptedAESKey)
 
             const params = {
                 auditor: auditor,
                 paperID: this.currentRow.pw_id,
                 approved: approved,
                 remark: auditor+ ":" + this.approveRemark, // 添加审批意见到params中
+                paperKey: encryptedAESKey,
             };
 
             const response = await check(params);
@@ -502,17 +587,21 @@ export default {
 
         async handlePreview(row) {
             // 从row中获取文件地址和AES密钥
-            // const filename = row.pw_address;
-            const address = row.pw_address; // 这里假设row.pw_address是文件名
+            const privateKeyFile = await this.selectPrivateKeyFile(); // 选择私钥文件
+            const privateKeyBuffer = await this.readFile(privateKeyFile); // 读取私钥文件内容
+            const privateKey = new TextDecoder().decode(privateKeyBuffer); // 将ArrayBuffer转换为字符串
+            console.log("privateKey:"+privateKey)
+            const aesKeyString = row.pw_key;
+            const decryptedAESKey = await this.decryptAESKeyWithPrivateKey(privateKey, aesKeyString); // 解密AES密钥
+            this.decryptedAESKey = decryptedAESKey;
+            console.log("decryptedAESKey:"+decryptedAESKey)
+            const AESBuffer = await this.importKeyFromBase64Url(decryptedAESKey); // 将AES密钥转换为ArrayBuffer
+
+            const address = row.pw_address;
             let parts = address.split("\\");
             let filename = parts[parts.length - 1];
-            console.log("filename:"+filename);
-            const aesKeyString = row.pw_key;
-            const aesKey = await this.importAESKey(aesKeyString);
             const ivString = row.iv;
-            const iv = this.base64ToArrayBuffer(ivString);
-            console.log("aesKeyString:"+aesKeyString);
-            console.log("ivString:"+ivString);
+            const iv = this.base64ToArrayBuffer(ivString)
 
             // 从服务器获取文件内容
             const response = await fetch(`http://localhost:9527/uploads/${filename}`);
@@ -521,16 +610,50 @@ export default {
             }
             const encryptedFileArrayBuffer = await response.arrayBuffer();
             // 使用AES密钥解密文件内容
-            const decryptedFileArrayBuffer = await this.decryptFileContent(encryptedFileArrayBuffer, aesKey, iv);
+            const decryptedFileArrayBuffer = await this.decryptFileContent(encryptedFileArrayBuffer, AESBuffer, iv);
 
-            // 创建一个表示解密后文件内容的Blob对象
-            const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/msword' });
+            //创建一个表示解密后文件内容的Blob对象
+            // const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/msword' });
+            const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/pdf' });
+
             // 创建一个表示该Blob的URL
             const url = URL.createObjectURL(decryptedFileBlob);
 
             // 在新窗口中打开这个URL
             window.open(url, '_blank');
+
+            this.previewed = 1;
         },
+
+        // async handlePreview(row) {
+        //     // 从row中获取文件地址和AES密钥
+        //     // const filename = row.pw_address;
+        //     const address = row.pw_address; // 这里假设row.pw_address是文件名
+        //     let parts = address.split("\\");
+        //     let filename = parts[parts.length - 1];
+        //     const aesKeyString = row.pw_key;
+        //
+        //     const aesKey = await this.importKeyFromBase64Url(aesKeyString);
+        //     const ivString = row.iv;
+        //     const iv = this.base64ToArrayBuffer(ivString)
+        //
+        //     // 从服务器获取文件内容
+        //     const response = await fetch(`http://localhost:9527/uploads/${filename}`);
+        //     if (!response.ok) {
+        //         throw new Error(`HTTP error! status: ${response.status}`);
+        //     }
+        //     const encryptedFileArrayBuffer = await response.arrayBuffer();
+        //     // 使用AES密钥解密文件内容
+        //     const decryptedFileArrayBuffer = await this.decryptFileContent(encryptedFileArrayBuffer, aesKey, iv);
+        //
+        //     // 创建一个表示解密后文件内容的Blob对象
+        //     const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/msword' });
+        //     // 创建一个表示该Blob的URL
+        //     const url = URL.createObjectURL(decryptedFileBlob);
+        //
+        //     // 在新窗口中打开这个URL
+        //     window.open(url, '_blank');
+        // },
 
         async decryptFileContent(encryptedData, aesKey, iv) {
             try {
@@ -548,25 +671,79 @@ export default {
             }
         },
 
-        async importAESKey(keyString) {
-            const rawKey = this.base64ToArrayBuffer(keyString);
-            const key = await window.crypto.subtle.importKey(
-                'raw',
-                rawKey,
-                'AES-GCM',
-                true,
-                ['encrypt', 'decrypt']
-            );
-            return key;
+        selectPrivateKeyFile() {
+            return new Promise((resolve, reject) => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.onchange = () => {
+                    resolve(input.files[0]);
+                };
+                input.onerror = () => {
+                    reject(new Error('File selection was cancelled'));
+                };
+                input.click();
+            });
         },
+
+        async decryptAESKeyWithPrivateKey(privateKey, encryptedAESKey) { // 解密AES密钥
+            const decrypt = new JSEncrypt();
+            decrypt.setPrivateKey(privateKey); // 设置私钥
+            const decryptedAESKey = decrypt.decrypt(encryptedAESKey); // 使用私钥解密AES密钥
+            return decryptedAESKey;
+        },
+
         base64ToArrayBuffer(base64) {
+            // 将base64字符串转换为二进制数据
             const binaryString = window.atob(base64);
+            // 计算二进制数据的字节长度
             const len = binaryString.length;
+            // 创建一个新的Uint8Array来存放ArrayBuffer的数据
             const bytes = new Uint8Array(len);
+            // 遍历二进制字符串，逐个字符填充到Uint8Array中
             for (let i = 0; i < len; i++) {
                 bytes[i] = binaryString.charCodeAt(i);
             }
+            // 返回包含Uint8Array的ArrayBuffer
             return bytes.buffer;
+        },
+
+        async importKeyFromBase64Url(base64UrlKey) { // 导入Base64URL编码的密钥
+            // 将 Base64URL 编码的字符串转换为 ArrayBuffer
+            const rawKey = this.base64UrlToArrayBuffer(base64UrlKey);
+
+            // 使用 ArrayBuffer 创建一个新的 CryptoKey 对象
+            const cryptoKey = await window.crypto.subtle.importKey(
+                'raw', // 导入操作的格式
+                rawKey, // 包含密钥数据的 ArrayBuffer 或 ArrayBufferView
+                'AES-GCM', // 密钥的算法
+                true, // 是否可导出
+                ['encrypt', 'decrypt'] // 密钥的用途
+            );
+
+            return cryptoKey;
+        },
+
+        base64UrlToArrayBuffer(base64Url) { // 将 Base64URL 编码的字符串转换为 ArrayBuffer
+            // 将 Base64URL 编码的字符串转换为普通的 Base64 编码
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+
+            // 将 Base64 编码的字符串解码为二进制字符串
+            const binaryString = window.atob(base64);
+
+            // 创建一个新的 ArrayBuffer 来存储二进制数据
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+
+            // 将二进制字符串的每个字符的字符代码填充到 Uint8Array 中
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+        }
+         return bytes.buffer;
+        },
+
+        base64ToBase64Url(base64) {
+            // 将 '+' 替换为 '-', 将 '/' 替换为 '_', 并去掉 '='
+            return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
         },
 
         // 分页导航
@@ -590,7 +767,8 @@ export default {
             this.tp.isAutoAdd = false;
         },
     }
-}
+};
+
 
 </script>
 
