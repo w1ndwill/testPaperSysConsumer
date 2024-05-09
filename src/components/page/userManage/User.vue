@@ -67,16 +67,9 @@
                     </template>
                 </el-table-column>
                 <el-table-column :show-overflow-tooltip="true" prop="userName" label="用户名" width="80" align="center"></el-table-column>
-                <el-table-column label="用户类型" align="center" width="80">
-                    <template slot-scope="scope" align="center">
-                        <el-tag :type="scope.row.isAdmin === '管理员' ? '' : scope.row.isAdmin === '教师' ? 'success' : ''" width="10">{{
-                            scope.row.isAdmin
-                        }}</el-tag>
-                    </template>
-                </el-table-column>
                 <el-table-column label="职位" align="center" width="100">
                     <template slot-scope="scope" align="center">
-                        <el-tag :type="scope.row.job === '1' ? '' : scope.row.job === '2' ? 'success' : 'warning'">
+                        <el-tag :type="scope.row.job === 1 ? 'info' : scope.row.job === 2 ? 'success' : 'danger'">
                             {{
                                 scope.row.job === 1 ? '普通教师' :
                                     scope.row.job === 2 ? '系主任' :
@@ -88,19 +81,6 @@
                 <el-table-column prop="sex" label="性别" align="center" width="50"></el-table-column>
                 <el-table-column :show-overflow-tooltip="true" prop="userPhone" label="手机号" align="center"></el-table-column>
                 <el-table-column :show-overflow-tooltip="true" prop="email" label="邮箱" align="center"></el-table-column>
-                <!-- <el-table-column label="账户余额">
-                    <template slot-scope="scope">￥{{ scope.row.money }}</template>
-                </el-table-column> -->
-
-                <!-- <el-table-column prop="address" label="地址"></el-table-column> -->
-                <!-- <el-table-column label="用户状态" align="center" width="80">
-                    <template slot-scope="scope">
-                        <el-tag :type="scope.row.deleted === '正常' ? 'success' : scope.row.deleted === '已删除' ? 'danger' : ''">{{
-                            scope.row.deleted
-                        }}</el-tag>
-                    </template>
-                </el-table-column> -->
-                <!-- <el-table-column prop="date" label="注册时间"></el-table-column> -->
 
                 <el-table-column label="操作" width="120" align="center">
                     <template slot-scope="scope">
@@ -151,10 +131,17 @@
                 <el-card class="box-card my-card" v-for="(user, index) in tableData" :key="index" shadow="hover">
                     <div slot="header" class="clearfix">
                         <span
-                            >用户类型：
-                            <el-tag :type="user.isAdmin === '管理员' ? '' : user.isAdmin === '教师' ? 'success' : ''" width="10">{{
-                                user.isAdmin
-                            }}</el-tag>
+                            >用户职位：
+<!--                            <el-tag :type="user.isAdmin === '管理员' ? '' : user.isAdmin === '教师' ? 'success' : ''" width="10">{{-->
+<!--                                user.isAdmin-->
+<!--                            }}</el-tag>-->
+                            <el-tag :type="user.job === '1' ? '' : user.job === '2' ? 'success' : 'warning'">
+                            {{
+                                    user.job === 1 ? '普通教师' :
+                                        user.job === 2 ? '系主任' :
+                                            '院长'
+                                }}
+                        </el-tag>
                         </span>
                         <el-button
                             style="float: right; padding: 3px 0; width: 30px; height: 30px"
