@@ -58,9 +58,6 @@
                     <template slot-scope="scope">
                         <el-image class="table-td-thumb" :src="scope.row.photo" :preview-src-list="[scope.row.photo]">
                             <div slot="error" class="image-slot">
-                                <!-- <i class="el-icon-picture-outline"></i> -->
-                                <!-- <img src="../../assets/img/img.jpg" class="user-avator" alt /> -->
-                                <!--加载失败时候就加载默认图标, -->
                                 <i class="el-icon-s-custom"></i>
                             </div>
                         </el-image>
