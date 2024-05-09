@@ -4,7 +4,7 @@
 
 <script>
 import resize from '@/utils/resize';
-import echarts from 'echarts';
+import * as echarts from 'echarts';
 
 export default {
     name: 'hollowPie',    // 饼状图

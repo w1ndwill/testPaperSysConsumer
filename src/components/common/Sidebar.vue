@@ -240,11 +240,6 @@ export default {
                                 }
                             ]
                         },
-                        {
-                            icon: 'el-icon-lx-redpacket_fill',
-                            index: '/donate',
-                            title: '支持作者'
-                        }
                     ]
                 }
             ],
@@ -275,6 +270,7 @@ export default {
     },
     methods: {
         getIsAdmin() {
+            console.log(localStorage.getItem('isAdmin'));
             return localStorage.getItem('isAdmin') !== '管理员';
         }
     },

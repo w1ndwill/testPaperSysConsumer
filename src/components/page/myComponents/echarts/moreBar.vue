@@ -5,7 +5,7 @@
 <script>
 // import resize from '@/mixins/resize';
 import resize from '@/utils/resize';
-import echarts from 'echarts';
+import * as echarts from 'echarts';
 export default {
     name: 'moreBar',   // 柱状图
     mixins: [resize],

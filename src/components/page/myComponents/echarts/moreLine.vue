@@ -4,7 +4,7 @@
 
 <script>
 import resize from '@/utils/resize';
-import echarts from 'echarts';
+import * as echarts from 'echarts';
 export default {
     name: 'moreLine',   // 折线图
     mixins: [resize],

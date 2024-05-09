@@ -60,6 +60,8 @@ public class User implements Serializable {
      */
     private String photo;
 
+    private Integer job;
+
     /**
      * 逻辑删除
      */

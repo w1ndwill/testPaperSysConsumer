@@ -61,6 +61,8 @@ public class UserVo {
 	 * 用户头像路径
 	 */
 	private String photo;
+
+	private Integer job;
 	
 	/**
 	 * 	逻辑删除
@@ -89,6 +91,7 @@ public class UserVo {
 		userVO.password = null;
 		userVO.email = user.getEmail();
 		userVO.isAdmin = ("Y".equals(user.getIsAdmin())) ? "管理员" : "教师";
+		userVO.job = user.getJob();
 		if ( null != user.getSex() ) {
 			userVO.sex = "1".equals(user.getSex()) ? "男" : "0".equals(user.getSex()) ?"女":"";
 		}

@@ -41,6 +41,7 @@
                     label="申请人"
                     prop="pw_create_by"
                     width="100"
+                    header-class-name="header-style"
                 ></el-table-column>
                 <el-table-column
                     :show-overflow-tooltip="true"
@@ -48,6 +49,7 @@
                     label="系级审核人"
                     prop="pw_auditor1"
                     width="100"
+                    header-class-name="header-style"
                 ></el-table-column>
                 <el-table-column
                     :show-overflow-tooltip="true"
@@ -55,6 +57,7 @@
                     label="院级审核人"
                     prop="pw_auditor2"
                     width="100"
+                    header-class-name="header-style"
                 ></el-table-column>
                 <el-table-column
                     :show-overflow-tooltip="true"
@@ -64,11 +67,11 @@
                     width="150"
                 >
                     <template slot-scope="scope">
-                        <el-tag v-if="scope.row.pw_status === '0'" type="info">待审核</el-tag>
+                        <el-tag v-if="scope.row.pw_status === '0'" type="info">等待系级审核</el-tag>
                         <el-tag v-else-if="scope.row.pw_status === '10'" type="success">系级审核通过</el-tag>
-                        <el-tag v-else-if="scope.row.pw_status === '11'" type="success">院级审核通过</el-tag>
                         <el-tag v-else-if="scope.row.pw_status === '20'" type="danger">系级审核拒绝</el-tag>
-                        <el-tag v-else-if="scope.row.pw_status === '21'" type="danger">院级审核拒绝</el-tag>
+                        <el-tag v-else-if="scope.row.pw_status === '11'" type="info">院级审核通过</el-tag>
+                        <el-tag v-else-if="scope.row.pw_status === '12'" type="danger">院级审核拒绝</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -79,7 +82,7 @@
                     width="200"
                 >
                     <template slot-scope="scope">
-                        <span v-if="scope.row.pw_describe">{{ scope.row.pw_describe }}</span>
+                        <span v-if="scope.row.pw_describe" v-html="scope.row.pw_describe.split('\n').filter(line => line.trim() !== '').join('<br>')"></span>
                         <span v-else>等待审批</span>
                     </template>
                 </el-table-column>
@@ -294,8 +297,6 @@ export default {
                             }
                         });
                     }
-                    console.log("rews"+res)
-                    console.log("rewsJson"+JSON.stringify(res))
                     this.tableData = res;
                     this.pageTotal = res.pageTotal || 0;
             });
@@ -535,6 +536,7 @@ export default {
         },
 
         handleCheck(row, approvedStatus) {
+            console.log("checkpreviewed:"+ this.previewed)
             if (this.previewed !== '1') {
                 this.$message.error('请先预览试题');
                 return;
@@ -613,47 +615,16 @@ export default {
             const decryptedFileArrayBuffer = await this.decryptFileContent(encryptedFileArrayBuffer, AESBuffer, iv);
 
             //创建一个表示解密后文件内容的Blob对象
-            // const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/msword' });
-            const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/pdf' });
+            const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/msword' });
+            // const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/pdf' });
 
             // 创建一个表示该Blob的URL
             const url = URL.createObjectURL(decryptedFileBlob);
 
             // 在新窗口中打开这个URL
             window.open(url, '_blank');
-
-            this.previewed = 1;
+            this.previewed = '1';
         },
-
-        // async handlePreview(row) {
-        //     // 从row中获取文件地址和AES密钥
-        //     // const filename = row.pw_address;
-        //     const address = row.pw_address; // 这里假设row.pw_address是文件名
-        //     let parts = address.split("\\");
-        //     let filename = parts[parts.length - 1];
-        //     const aesKeyString = row.pw_key;
-        //
-        //     const aesKey = await this.importKeyFromBase64Url(aesKeyString);
-        //     const ivString = row.iv;
-        //     const iv = this.base64ToArrayBuffer(ivString)
-        //
-        //     // 从服务器获取文件内容
-        //     const response = await fetch(`http://localhost:9527/uploads/${filename}`);
-        //     if (!response.ok) {
-        //         throw new Error(`HTTP error! status: ${response.status}`);
-        //     }
-        //     const encryptedFileArrayBuffer = await response.arrayBuffer();
-        //     // 使用AES密钥解密文件内容
-        //     const decryptedFileArrayBuffer = await this.decryptFileContent(encryptedFileArrayBuffer, aesKey, iv);
-        //
-        //     // 创建一个表示解密后文件内容的Blob对象
-        //     const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/msword' });
-        //     // 创建一个表示该Blob的URL
-        //     const url = URL.createObjectURL(decryptedFileBlob);
-        //
-        //     // 在新窗口中打开这个URL
-        //     window.open(url, '_blank');
-        // },
 
         async decryptFileContent(encryptedData, aesKey, iv) {
             try {
@@ -739,11 +710,6 @@ export default {
                 bytes[i] = binaryString.charCodeAt(i);
         }
          return bytes.buffer;
-        },
-
-        base64ToBase64Url(base64) {
-            // 将 '+' 替换为 '-', 将 '/' 替换为 '_', 并去掉 '='
-            return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
         },
 
         // 分页导航
@@ -891,5 +857,12 @@ input[type="file"]:focus {
 .custom-file-input:hover .custom-file-input-text {
     border-color: #C0C4CC;
 }
+
+ .header-style {
+     background-color: #f5f7fa; /* 背景颜色 */
+     color: #606266; /* 文字颜色 */
+     font-weight: bold; /* 字体加粗 */
+     text-align: center; /* 文字居中 */
+ }
 
 </style>

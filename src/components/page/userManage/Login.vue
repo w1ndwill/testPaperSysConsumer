@@ -93,6 +93,7 @@ export default {
                                 setTimeout(() => {
                                     this.loading.close();
                                 }, 500);
+                                console.log('res ==>', res);
                                 //登录成功
                                 localStorage.setItem('ms_username', res.userName);
                                 localStorage.setItem('isAdmin', res.isAdmin); //管理员 or 教师
@@ -101,6 +102,7 @@ export default {
                                 localStorage.setItem('photo', baseURL()+res.photo);
                                 localStorage.setItem('email', res.email);
                                 localStorage.setItem('sex', res.sex);
+                                localStorage.setItem('job', res.job);
                                 this.$router.push('/home');
                                 this.$message.success('登录成功');
                             } else {

@@ -74,6 +74,17 @@
                         }}</el-tag>
                     </template>
                 </el-table-column>
+                <el-table-column label="职位" align="center" width="100">
+                    <template slot-scope="scope" align="center">
+                        <el-tag :type="scope.row.job === '1' ? '' : scope.row.job === '2' ? 'success' : 'warning'">
+                            {{
+                                scope.row.job === 1 ? '普通教师' :
+                                    scope.row.job === 2 ? '系主任' :
+                                        '院长'
+                            }}
+                        </el-tag>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="sex" label="性别" align="center" width="50"></el-table-column>
                 <el-table-column :show-overflow-tooltip="true" prop="userPhone" label="手机号" align="center"></el-table-column>
                 <el-table-column :show-overflow-tooltip="true" prop="email" label="邮箱" align="center"></el-table-column>
@@ -216,10 +227,17 @@
                                 show-password
                             ></el-input>
                         </el-form-item>
-                        <el-form-item label="用户类型:" prop="isAdmin" :rules="rules.pleaseSelect">
-                            <el-select v-model="user.isAdmin" placeholder="请选择用户类型" style="width: 100%" clearable>
-                                <el-option key="Y" label="管理员" value="Y"></el-option>
-                                <el-option key="N" label="教师" value="N"></el-option>
+<!--                        <el-form-item label="用户权限:" prop="isAdmin" :rules="rules.pleaseSelect">-->
+<!--                            <el-select v-model="user.isAdmin" placeholder="请选择用户职位" style="width: 100%" clearable>-->
+<!--                                <el-option key="Y" label="管理员" value="Y"></el-option>-->
+<!--                                <el-option key="N" label="教师" value="N"></el-option>-->
+<!--                            </el-select>-->
+<!--                        </el-form-item>-->
+                        <el-form-item label="用户职位:" prop="job" :rules="rules.pleaseSelect" v-if ="this.currentjob - user.job === 1 || 0">
+                            <el-select v-model="user.job" placeholder="请选择用户职位" style="width: 100%" clearable>
+                                <el-option v-if="user.job === 3 || user.job === 2" key=3 label="院长" value=3></el-option>
+                                <el-option v-if="user.job === 2 || user.job === 1" key=2 label="系主任" value=2></el-option>
+                                <el-option v-if="user.job === 1 || user.job === 2" key=1 label="教师" value=1></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="手机号:" prop="userPhone" :rules="rules.phone">
@@ -256,6 +274,7 @@ import userPhoto from '../myComponents/UpLoadPhoto';
 import {baseURL} from '@/utils/request';
 import md5 from 'js-md5';
 import rules from '@/utils/rules';
+import { value } from 'lodash/seq';
 export default {
     components: {
         userPhoto
@@ -266,6 +285,7 @@ export default {
             rules,
             loading: true,
             showType: '列表',
+            currentjob: localStorage.getItem('job'),
             query: {
                 userId: localStorage.getItem('userId'),
                 isAdmin: '',
@@ -282,7 +302,8 @@ export default {
                 photo: '',
                 email: '',
                 password: '',
-                sex: ''
+                sex: '',
+                job: ''
             },
             tableData: [],
             multipleSelection: [],
@@ -366,7 +387,7 @@ export default {
         },
         // 保存编辑
         save() {
-            this.$refs['user'].validate((check) => {
+            this.$refs['user'].validate((check) => { //校验
                 if (check) {
                     if (this.title === '添加用户') {
                         this.addUser();
@@ -402,15 +423,20 @@ export default {
             obj.password = md5(user.password);
             obj.isAdmin = user.isAdmin;
             obj.sex = user.sex;
+            obj.job = user.job;
             return obj;
         },
         editUser() {
             if (this.user.deleted === '正常') this.user.deleted = 1;
-            this.user.isAdmin === '管理员'
-                ? (this.user.isAdmin = 'Y')
-                : this.user.isAdmin === '教师'
-                ? (this.user.isAdmin = 'N')
-                : this.user.isAdmin;
+            if (this.user.job === '1') {
+                this.user.isAdmin = 'N';
+            }
+            if (this.user.job === '2') {
+                this.user.isAdmin = 'Y';
+            }
+            if (this.user.job === '3') {
+                this.user.isAdmin = 'Y';
+            }
             this.user.sex === '男' ? (this.user.sex = 1) : this.user.sex === '女' ? (this.user.sex = 0) : this.user.sex;
             if (this.user.password && this.user.password.length > 0) {
                 this.user.password = md5(this.user.password);
@@ -418,6 +444,7 @@ export default {
             if(this.user.photo.indexOf("http")>=0){
                 this.user.photo = this.user.photo.substring(22,this.user.photo.length)
             }
+            console.log('this.user==>', this.user)
             edit(this.user)
                 .then((res) => {
                     this.userVisible = false;

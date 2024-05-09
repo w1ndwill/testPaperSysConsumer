@@ -5,7 +5,7 @@
 <script>
 // import resize from '@/mixins/resize';
 import resize from '@/utils/resize';
-import echarts from 'echarts';
+import * as echarts from 'echarts';
 const colorList = [
     '#28CAD8',
     '#E5A214',
@@ -33,48 +33,48 @@ export default {
     },
     data() {
         return {
-            // mydata: [
-            //     {
-            //         name: 'Vue',
-            //         value: 85
-            //     },
-            //     {
-            //         name: 'css',
-            //         value: 55
-            //     },
-            //     {
-            //         name: 'html',
-            //         value: 35
-            //     },
-            //     {
-            //         name: 'Java',
-            //         value: 110
-            //     },
-            //     {
-            //         name: 'element-ui',
-            //         value: 85
-            //     },
-            //     {
-            //         name: 'echarts',
-            //         value: 75
-            //     },
-            //     {
-            //         name: 'SpringBoot',
-            //         value: 100
-            //     },
-            //     {
-            //         name: 'MybatisPlus',
-            //         value: 100
-            //     },
-            //     {
-            //         name: 'MySQL',
-            //         value: 90
-            //     },
-            //     {
-            //         name: 'Redis',
-            //         value: 60
-            //     }
-            // ]
+            mydata: [
+                {
+                    name: 'Vue',
+                    value: 85
+                },
+                {
+                    name: 'css',
+                    value: 55
+                },
+                {
+                    name: 'html',
+                    value: 35
+                },
+                {
+                    name: 'Java',
+                    value: 110
+                },
+                {
+                    name: 'element-ui',
+                    value: 85
+                },
+                {
+                    name: 'echarts',
+                    value: 75
+                },
+                {
+                    name: 'SpringBoot',
+                    value: 100
+                },
+                {
+                    name: 'MybatisPlus',
+                    value: 100
+                },
+                {
+                    name: 'MySQL',
+                    value: 90
+                },
+                {
+                    name: 'Redis',
+                    value: 60
+                }
+            ]
         };
     },
     mounted() {
