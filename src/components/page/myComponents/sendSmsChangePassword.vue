@@ -75,6 +75,7 @@
 </template>
 <script>
 import { sendSms, checkValidate, reSetPsw } from '@/api/user';
+import CryptoJS from 'crypto-js'; // 导入 CryptoJS 库
 import md5 from 'js-md5';
 export default {
     props: {
@@ -208,8 +209,8 @@ export default {
                 this.$message.warning('两次密码不一致');
                 return;
             }
-            this.info.newPassword = md5(this.info.newPassword);
-            this.info.rePassword = md5(this.info.rePassword);
+            this.info.newPassword = CryptoJS.SHA256(this.info.newPassword).toString();
+            this.info.rePassword = CryptoJS.SHA256(this.info.rePassword).toString();
             reSetPsw(this.info)
                 .then((res) => {
                     this.active = 3;

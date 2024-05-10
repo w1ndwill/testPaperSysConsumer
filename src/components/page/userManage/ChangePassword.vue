@@ -30,7 +30,7 @@
 </template>
 <script>
 import { changePsw } from '@/api/login';
-import md5 from 'js-md5';
+import CryptoJS from 'crypto-js'; // 导入 CryptoJS 库
 //引入短信发送重置密码页面
 import smsChangePassword from '../myComponents/sendSmsChangePassword';
 import rules from '@/utils/rules';
@@ -62,7 +62,7 @@ export default {
                 newPassword: '',
                 rePassword: ''
             },
-            changeMD5: {
+            changeHashed: { // 修改为 changeHashed
                 userId: localStorage.getItem('userId'),
                 oldPassword: '',
                 newPassword: '',
@@ -90,10 +90,16 @@ export default {
         changPassword() {
             this.$refs['change'].validate((check) => {
                 if (check) {
-                    (this.changeMD5.oldPassword = md5(this.change.oldPassword)),
-                        (this.changeMD5.newPassword = md5(this.change.newPassword)),
-                        (this.changeMD5.rePassword = md5(this.change.rePassword));
-                    changePsw(this.changeMD5)
+                    let hashedOldPassword = CryptoJS.SHA256(this.change.oldPassword).toString();
+                    let hashedNewPassword = CryptoJS.SHA256(this.change.newPassword).toString();
+                    let hashedRePassword = CryptoJS.SHA256(this.change.rePassword).toString();
+
+                    // 将哈希后的密码存储到 changeHashed 对象中
+                    this.changeHashed.oldPassword = hashedOldPassword;
+                    this.changeHashed.newPassword = hashedNewPassword;
+                    this.changeHashed.rePassword = hashedRePassword;
+
+                    changePsw(this.changeHashed)
                         .then((res) => {
                             if (res.success) {
                                 this.$message.success('修改成功~');

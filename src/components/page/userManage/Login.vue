@@ -43,13 +43,13 @@
 
 <script>
 import { login } from '@/api/login';
-import md5 from 'js-md5';
+import CryptoJS from 'crypto-js'; // 导入 CryptoJS 库
 import {baseURL} from '@/utils/request';
 import smsChangePassword from '../myComponents/sendSmsChangePassword'
 export default {
-      components:{
-    smsChangePassword
-  },
+    components:{
+        smsChangePassword
+    },
     data: function () {
         return {
             loading: false,
@@ -60,7 +60,7 @@ export default {
                 password: 'qq2536',
                 // rememberMe: true
             },
-            paramMD5: {
+            paramSHA: {
                 userPhone: '',
                 password: '',
                 // rememberMe: ''
@@ -83,17 +83,16 @@ export default {
                         spinner: 'el-icon-loading',
                         background: 'rgba(0, 0, 0, 0.7)'
                     });
-                    this.paramMD5.password = md5(this.param.password);
-                    this.paramMD5.userPhone = this.param.userPhone;
+                    this.paramSHA.password = CryptoJS.SHA256(this.param.password).toString();
+                    this.paramSHA.userPhone = this.param.userPhone;
                     // this.paramMD5.rememberMe = this.param.rememberMe;
-                    login(this.paramMD5)
+                    login(this.paramSHA)
                         .then((res) => {
-                            
+
                             if (res) {
                                 setTimeout(() => {
                                     this.loading.close();
                                 }, 500);
-                                console.log('res ==>', res);
                                 //登录成功
                                 localStorage.setItem('ms_username', res.userName);
                                 localStorage.setItem('isAdmin', res.isAdmin); //管理员 or 教师
@@ -102,7 +101,6 @@ export default {
                                 localStorage.setItem('photo', baseURL()+res.photo);
                                 localStorage.setItem('email', res.email);
                                 localStorage.setItem('sex', res.sex);
-                                localStorage.setItem('job', res.job);
                                 this.$router.push('/home');
                                 this.$message.success('登录成功');
                             } else {

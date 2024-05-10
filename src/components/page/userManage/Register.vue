@@ -77,6 +77,7 @@ import { register } from '@/api/login';
 import md5 from 'js-md5';
 import rules from '@/utils/rules';
 import {generate} from '@/api/Key';
+import CryptoJS from 'crypto-js';
 
 export default {
     // components: {
@@ -112,7 +113,7 @@ export default {
                         background: 'rgba(0, 0, 0, 0.7)'
                     });
                     this.temPsw = this.user.password;
-                    this.user.password = md5(this.user.password); // 密码加密
+                    this.user.password =  CryptoJS.SHA256(this.user.password).toString();
                     register(this.user)
                         .then((res) => {
                             if (res.success) {
