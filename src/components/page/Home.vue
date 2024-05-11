@@ -16,7 +16,7 @@
                             </div>
                         </el-card>
                     </el-col>
-                    <el-col :span="6" :offset="3">
+                    <el-col :span="6">
                         <el-card shadow="hover" :body-style="{ padding: '0px' }" class="myCard2">
                             <div class="grid-content grid-con-2" @click="to('course')">
                                 <i class="el-icon-lx-read grid-con-icon"></i>
@@ -31,7 +31,7 @@
                             </div>
                         </el-card>
                     </el-col>
-                    <el-col :span="6" :offset="3">
+                    <el-col :span="6">
                         <el-card shadow="hover" :body-style="{ padding: '0px' }" class="myCard3">
                             <div class="grid-content grid-con-3" @click="to('question')">
                                 <i class="el-icon-lx-text grid-con-icon"></i>
@@ -42,6 +42,21 @@
                                         </div>
                                     </div>
                                     <div style="color:#fff">题目总数量</div>
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-card shadow="hover" :body-style="{ padding: '0px' }" class="myCard4">
+                            <div class="grid-content grid-con-4" @click="to('check')">
+                                <i class="el-icon-lx-text grid-con-icon"></i>
+                                <div class="grid-cont-right">
+                                    <div class="grid-num">
+                                        <div class="grid-num">
+                                            <count-to :startVal="0" :endVal="paperNo" :duration="2000" />
+                                        </div>
+                                    </div>
+                                    <div style="color:#fff">待审批数量</div>
                                 </div>
                             </div>
                         </el-card>
@@ -62,7 +77,7 @@
 
 <script>
 import surroundGraph from './myComponents/echarts/surroundGraph';
-import {getTpNo,getCourseNo,getQueNo} from '@/api/index' 
+import {getTpNo,getCourseNo,getQueNo,getPaperNo} from '@/api/index'
 import countTo from 'vue-count-to';
 export default {
     name: 'dashboard',
@@ -77,6 +92,7 @@ export default {
             tpNo:0,
             queNo:0,
             courseNo:0,
+            paperNo:0,
             // todoList: [
             //     {
             //         title: '今天要出五张试卷',
@@ -164,6 +180,11 @@ export default {
                     this.queNo  = res
                 }
            })
+           getPaperNo().then(res=>{
+                if(res){
+                    this.paperNo  = res
+                }
+           })
        }
            
     },
@@ -181,22 +202,28 @@ export default {
 
 <style scoped>
 .myCard1{
+    width: 200px;
     border-radius: 20px;
     background-image:linear-gradient(#5771FD, #7D74FD, #A577FD, #C47AFE); 
 
 }
 .myCard2{
+    width: 200px;
     border-radius: 20px;
     background-image:linear-gradient(#45D89A, #5EDA8B, #82DE74, #A1E162); 
 
 }
 .myCard3{
+    width: 200px;
     border-radius: 20px;
-    background-image:linear-gradient(#EB697B, #EC7A72, #EE8E67, #EF9961); 
+    background-image:linear-gradient(#EB697B, #EC7A72, #EE8E67, #EF9961);
 
 }
-.el-row {
-    margin-bottom: 20px;
+
+.myCard4{
+    width: 200px;
+    border-radius: 20px;
+    background-image: linear-gradient(#6B5B95, #BC70A4, #BFD641, #F0B98D);
 }
 
 .grid-content {
@@ -245,6 +272,14 @@ export default {
 
 .grid-con-3 .grid-con-icon {
     background: rgb(242, 94, 67);
+}
+
+.grid-con-3 .grid-num {
+    color: white;
+}
+
+.grid-con-4 .grid-con-icon {
+    background: rgba(119, 95, 142, 0.75);
 }
 
 .grid-con-3 .grid-num {

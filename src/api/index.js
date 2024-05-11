@@ -44,3 +44,11 @@ export const getQueNo = params => {
     });
 };
 
+export const getPaperNo = params => {
+    return request({
+        url: 'paperWd/getPapNo',
+        method: 'get',
+        params: params
+    });
+}
+

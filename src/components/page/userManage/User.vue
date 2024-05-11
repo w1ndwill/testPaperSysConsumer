@@ -287,7 +287,7 @@ export default {
                 email: '',
                 password: '',
                 sex: '',
-                job: ''
+                job: null
             },
             tableData: [],
             multipleSelection: [],

@@ -13,4 +13,8 @@ import java.util.List;
  */
 public interface UserMapper extends BaseMapper<User> {
     List<User> isAdmin();
+
+    List<User> isAdmin1();
+
+    List<User> isAdmin2();
 }

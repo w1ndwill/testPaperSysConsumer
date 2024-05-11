@@ -79,7 +79,7 @@
                     align="center"
                     label="审核意见"
                     prop="pw_describe"
-                    width="200"
+                    width="250"
                 >
                     <template slot-scope="scope">
                         <span v-if="scope.row.pw_describe" v-html="scope.row.pw_describe.split('\n').filter(line => line.trim() !== '').join('<br>')"></span>
@@ -155,7 +155,7 @@
                         placeholder="请选择系级审核人"
                     >
                         <el-option
-                            v-for="user in auditorList"
+                            v-for="user in auditorList1"
                             :key="user.userName"
                             :label="user.userName"
                             :value="user.userName"
@@ -168,7 +168,7 @@
                         placeholder="请选择院级审核人"
                     >
                         <el-option
-                            v-for="user in auditorList"
+                            v-for="user in auditorList2"
                             :key="user.userName"
                             :label="user.userName"
                             :value="user.userName"
@@ -223,7 +223,7 @@
 </template>
 
 <script>
-import { check, getAdminList, getCourse, query, save, uploadto_server,getPublicKey } from '@/api/check';
+import { check, getAdminList1, getAdminList2, getCourse, query, save, uploadto_server,getPublicKey } from '@/api/check';
 import question from '@/components/page/queManage/Question.vue';
 import power from '@/utils/power';
 import JSEncrypt from 'jsencrypt';
@@ -271,7 +271,8 @@ export default {
                 file: null,
             },
             courseList: [],
-            auditorList: [],
+            auditorList1: [],
+            auditorList2: [],
             uploadSuccess: false,
             encryptedFileBlob: null,
             remark: '',
@@ -300,8 +301,11 @@ export default {
                     this.tableData = res;
                     this.pageTotal = res.pageTotal || 0;
             });
-            getAdminList().then(res => {
-                this.auditorList = res;
+            getAdminList1().then(res => {
+                this.auditorList1 = res;
+            });
+            getAdminList2().then(res => {
+                this.auditorList2 = res;
             });
             getCourse().then(res => {
                 this.courseList = res;
@@ -589,14 +593,13 @@ export default {
 
         async handlePreview(row) {
             // 从row中获取文件地址和AES密钥
+            // const privateKeyFile = await this.selectPrivateKeyFile(); // 选择私钥文件
+            this.$message.info('请选择您的RSA私钥');
             const privateKeyFile = await this.selectPrivateKeyFile(); // 选择私钥文件
             const privateKeyBuffer = await this.readFile(privateKeyFile); // 读取私钥文件内容
             const privateKey = new TextDecoder().decode(privateKeyBuffer); // 将ArrayBuffer转换为字符串
-            console.log("privateKey:"+privateKey)
             const aesKeyString = row.pw_key;
             const decryptedAESKey = await this.decryptAESKeyWithPrivateKey(privateKey, aesKeyString); // 解密AES密钥
-            this.decryptedAESKey = decryptedAESKey;
-            console.log("decryptedAESKey:"+decryptedAESKey)
             const AESBuffer = await this.importKeyFromBase64Url(decryptedAESKey); // 将AES密钥转换为ArrayBuffer
 
             const address = row.pw_address;
@@ -660,6 +663,10 @@ export default {
             const decrypt = new JSEncrypt();
             decrypt.setPrivateKey(privateKey); // 设置私钥
             const decryptedAESKey = decrypt.decrypt(encryptedAESKey); // 使用私钥解密AES密钥
+            if (!decryptedAESKey) {
+                this.$message.error('密钥不正确');
+                return;
+            }
             return decryptedAESKey;
         },
 

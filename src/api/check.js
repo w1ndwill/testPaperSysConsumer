@@ -1,8 +1,15 @@
 import request from '../utils/request';
 
-export function getAdminList() {
+export function getAdminList1() {
     return request({
-        url: 'paperWd/getAdmin',
+        url: 'paperWd/getAdmin1',
+        method: 'get',
+    });
+}
+
+export function getAdminList2() {
+    return request({
+        url: 'paperWd/getAdmin2',
         method: 'get',
     });
 }

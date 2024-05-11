@@ -5,4 +5,14 @@
         SELECT * FROM user
         WHERE is_admin = 'Y'
     </select>
+
+    <select id="isAdmin1" resultType="com.gem.entity.User">
+        SELECT * FROM user
+        WHERE job = 2
+    </select>
+
+    <select id="isAdmin2" resultType="com.gem.entity.User">
+        SELECT * FROM user
+        WHERE job = 3
+    </select>
 </mapper>

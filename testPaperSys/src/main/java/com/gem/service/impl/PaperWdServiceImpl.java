@@ -23,9 +23,13 @@ public class PaperWdServiceImpl extends ServiceImpl<PaperWdMapper, PaperWd> impl
     private UserMapper userMapper;
 
     @Override
-    public List<User> getAdmin() {
-        System.out.println("getAdmin:"+ userMapper.isAdmin());
-        return userMapper.isAdmin();
+    public List<User> getAdmin1() {
+        return userMapper.isAdmin1();
+    }
+
+    @Override
+    public List<User> getAdmin2() {
+        return userMapper.isAdmin2();
     }
 
     @Override

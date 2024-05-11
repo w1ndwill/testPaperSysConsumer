@@ -43,10 +43,14 @@ public class PaperWdController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/getAdmin")
-    public List<User> getAdmin() {
-        System.out.println("getAdmin::"+ paperWdService.getAdmin()); // $hasLocalVariable(paperWdService)
-        return paperWdService.getAdmin();
+    @RequestMapping("/getAdmin1")
+    public List<User> getAdmin1() {
+        return paperWdService.getAdmin1();
+    }
+
+    @RequestMapping("/getAdmin2")
+    public List<User> getAdmin2() {
+        return paperWdService.getAdmin2();
     }
 
     @PostMapping("/upload")
@@ -138,6 +142,11 @@ public class PaperWdController {
             // 返回失败响应
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", "审批失败"));
         }
+    }
+
+    @RequestMapping("/getPapNo")
+    public int getQueNo(){
+        return paperWdService.count();
     }
 
 
