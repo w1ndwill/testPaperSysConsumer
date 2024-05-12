@@ -14,7 +14,7 @@ public interface PaperWdService extends IService<PaperWd> {
 
     List<User> getAdmin2();
 
-    void insertPaperWd(String papername, String papercreateBy, String course, String paperurl, String paperkey,String iv, String auditor1, String auditor2);
+    void insertPaperWd(String papername, String papercreateBy, String course, String paperurl, String paperkey, String paperType, String iv, String auditor1, String auditor2);
 
     List<PaperWd> queryPaperWdByPage(String username, int page, int pageSize);
 

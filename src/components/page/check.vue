@@ -255,6 +255,7 @@ export default {
                 pageSize: 10,
                 status: 0,
             },
+            paperType: '',
             paperId : '',
             pageTotal : 0,
             checkVisible: false,
@@ -329,6 +330,16 @@ export default {
         async handleFileUpload(event) {
             const file = event.target.files[0];
             this.papername = file.name;
+
+            const fileType = file.type;
+            console.log("fileType:"+fileType)
+            if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                this.paperType = 'Word';
+                console.log('文件类型Word');
+            } else {
+                this.paperType = 'Pdf';
+                console.log('文件类型是Pdf');
+            }
             try {
                 // 生成AES密钥
                 const aesKey = await this.generateRandomAESKey();
@@ -426,19 +437,20 @@ export default {
             const paperkey1 = await this.getCryptoKeyString(key);
             const publicKey = await this.getPublicKey(this.form.selectAuditor1);
             const paperkey = await this.encryptAESKeyWithPublicKey(publicKey, paperkey1);
-            console.log("key:"+paperkey)
-            console.log("paperkey:"+paperkey)
             const papercreateBy = localStorage.getItem('ms_username');
             const papername = this.papername;
             const uploadResponse = await this.uploadToServer({
                 encryptedFileData: this.encryptedFileData,
             });
+            // const paperType = this.paperType;
+            // console.log("paperType:"+paperType)
             if (uploadResponse.success) {
                 const saveResponse = await this.save({
                     papername : papername,
                     papercreateBy: papercreateBy,
                     paperurl: uploadResponse.fileUrl,
                     paperkey: paperkey,
+                    paperType: this.paperType,
                     iv: iv,
                     auditor1: this.form.selectAuditor1,
                     auditor2: this.form.selectAuditor2,
@@ -488,52 +500,18 @@ export default {
             return encryptedAESKey;
         },
 
-        // async encryptAESKeyWithRSA(aesKeyString, auditor) {
-        //     try {
-        //         const aesKeyArrayBuffer = this.base64UrlToArrayBuffer(aesKeyString);
-        //         console.log("aesKeyArrayBuffer:"+aesKeyArrayBuffer)
-        //         const publicKeyString = await this.getPublicKey(auditor);
-        //         const publicKey = await this.base64ToJwk(publicKeyString);
-        //         const keyData = await window.crypto.subtle.importKey( // 导入RSA公钥
-        //             'jwk',
-        //             publicKey,
-        //             {
-        //                 name: "RSA-OAEP",
-        //                 hash: {name: "SHA-256"}
-        //             },
-        //             true,
-        //             ['encrypt']
-        //         );
-        //         console.log("keyData:"+keyData)
-        //         try {
-        //             const encryptedKey = await window.crypto.subtle.encrypt( // 使用RSA公钥加密AES密钥
-        //                 {
-        //                     name: "RSA-OAEP",
-        //                 },
-        //                 keyData, // RSA公钥
-        //                 aesKeyArrayBuffer // AES密钥
-        //             );
-        //             console.log("encryptedKey:"+encryptedKey)
-        //             return encryptedKey;
-        //         } catch (encryptError) {
-        //             console.error('Encryption error:', encryptError);
-        //             console.log(encryptError.error)
-        //         }
-        //     } catch (error) {
-        //         console.error('Error:', error);
-        //     }
-        // },
-
-        async save({ papername, papercreateBy, paperurl, paperkey, iv, auditor1, auditor2,  course}) { // 保存文件信息
+        async save({ papername, papercreateBy, paperurl, paperkey, paperType, iv, auditor1, auditor2,  course}) { // 保存文件信息
             const formData2 = new FormData();
             formData2.append('papername', papername);
             formData2.append('papercreateBy', papercreateBy);
             formData2.append('paperurl', paperurl);
             formData2.append('paperkey', paperkey);
+            formData2.append('papertype', paperType)
             formData2.append('iv', iv);
             formData2.append('auditor1', auditor1);
             formData2.append('auditor2', auditor2);
             formData2.append('course', course);
+            console.log("paperType" + paperType)
             const response = await save(formData2);
             console.log("response:", response);
             return response;
@@ -617,16 +595,31 @@ export default {
             // 使用AES密钥解密文件内容
             const decryptedFileArrayBuffer = await this.decryptFileContent(encryptedFileArrayBuffer, AESBuffer, iv);
 
-            //创建一个表示解密后文件内容的Blob对象
-            const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/msword' });
-            // const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/pdf' });
-
-            // 创建一个表示该Blob的URL
-            const url = URL.createObjectURL(decryptedFileBlob);
-
-            // 在新窗口中打开这个URL
-            window.open(url, '_blank');
-            this.previewed = '1';
+            if (row.pw_type === 'Word') {
+                const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/msword' });
+                // 创建一个表示该Blob的URL
+                const url = URL.createObjectURL(decryptedFileBlob);
+                // 在新窗口中打开这个URL
+                window.open(url, '_blank');
+                this.previewed = '1';
+            } else {
+                const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/pdf' });
+                // 创建一个表示该Blob的URL
+                const url = URL.createObjectURL(decryptedFileBlob);
+                // 在新窗口中打开这个URL
+                window.open(url, '_blank');
+                this.previewed = '1';
+            }
+            // //创建一个表示解密后文件内容的Blob对象
+            // const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/msword' });
+            // // const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/pdf' });
+            //
+            // // 创建一个表示该Blob的URL
+            // const url = URL.createObjectURL(decryptedFileBlob);
+            //
+            // // 在新窗口中打开这个URL
+            // window.open(url, '_blank');
+            // this.previewed = '1';
         },
 
         async decryptFileContent(encryptedData, aesKey, iv) {

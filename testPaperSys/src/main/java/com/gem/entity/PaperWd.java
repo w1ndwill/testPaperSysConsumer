@@ -31,6 +31,8 @@ public class PaperWd implements Serializable {
 
     private String pw_key;
 
+    private String pw_type;
+
     private String iv;
 
     private String pw_status;
@@ -42,7 +44,7 @@ public class PaperWd implements Serializable {
       @TableField(fill = FieldFill.INSERT)
     private Date pw_addTime;
 
-    public PaperWd(Integer pw_id, String pw_name, String pw_create_by, String pw_course, String pw_address, String pw_describe, String pw_key, String iv, String pw_status,String pw_auditor1, String pw_auditor2, Date pw_addTime) {
+    public PaperWd(Integer pw_id, String pw_name, String pw_create_by, String pw_course, String pw_address, String pw_describe, String pw_key, String pw_type,String iv, String pw_status,String pw_auditor1, String pw_auditor2, Date pw_addTime) {
         this.pw_id = pw_id;
         this.pw_name = pw_name;
         this.pw_create_by = pw_create_by;
@@ -50,6 +52,7 @@ public class PaperWd implements Serializable {
         this.pw_address = pw_address;
         this.pw_describe = pw_describe;
         this.pw_key = pw_key;
+        this.pw_type = pw_type;
         this.iv = iv;
         this.pw_status = pw_status;
         this.pw_auditor1 = pw_auditor1;

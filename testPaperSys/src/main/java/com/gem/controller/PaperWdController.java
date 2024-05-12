@@ -91,13 +91,14 @@ public class PaperWdController {
                      @RequestParam("papercreateBy") String papercreateBy,
                      @RequestParam("paperurl") String paperurl,
                      @RequestParam("paperkey") String paperkey,
+                     @RequestParam("papertype") String paperType,
                      @RequestParam("iv") String iv,
                      @RequestParam("auditor1") String auditor1,
                      @RequestParam("auditor2") String auditor2,
                      @RequestParam("course") String course) {
         HashMap<String, Object> map = new HashMap<>();
         try {
-            paperWdService.insertPaperWd(papername, papercreateBy, course, paperurl, paperkey, iv, auditor1, auditor2);
+            paperWdService.insertPaperWd(papername, papercreateBy, course, paperurl, paperkey, paperType, iv, auditor1, auditor2);
             map.put("success", true);
             map.put("message", "保存成功");
             return ResponseEntity.ok().body(map);

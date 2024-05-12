@@ -33,8 +33,8 @@ public class PaperWdServiceImpl extends ServiceImpl<PaperWdMapper, PaperWd> impl
     }
 
     @Override
-    public void insertPaperWd(String papername, String papercreateBy, String course, String paperurl, String paperkey, String iv, String auditor1, String auditor2) {
-        paperWdMapper.insertPaperWd1(papername, papercreateBy, course, paperurl, paperkey, iv, auditor1, auditor2);
+    public void insertPaperWd(String papername, String papercreateBy, String course, String paperurl, String paperkey, String paperType, String iv, String auditor1, String auditor2) {
+        paperWdMapper.insertPaperWd1(papername, papercreateBy, course, paperurl, paperkey, paperType, iv, auditor1, auditor2);
     }
 
     @Override

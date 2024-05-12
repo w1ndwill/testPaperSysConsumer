@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gem.mapper.PaperWdMapper">
     <insert id="insertPaperWd1" keyProperty="pw_id">
-        INSERT INTO paper_wd (pw_name, pw_create_by, pw_course, pw_address, pw_key, iv, pw_auditor1, pw_auditor2, pw_addTime)
-        VALUES (#{papername}, #{papercreateBy}, #{course}, #{paperurl}, #{paperkey}, #{iv},  #{auditor1}, #{auditor2}, now())
+        INSERT INTO paper_wd (pw_name, pw_create_by, pw_course, pw_address, pw_key, paper_type, iv, pw_auditor1, pw_auditor2, pw_addTime)
+        VALUES (#{papername}, #{papercreateBy}, #{course}, #{paperurl}, #{paperkey}, #{paperType}, #{iv}, #{auditor1}, #{auditor2}, now())
     </insert>
 
     <select id="selectPaperWdByPage" resultType="com.gem.entity.PaperWd">
-        SELECT pw_id, pw_name, pw_create_by, pw_course, pw_address, pw_describe, pw_key, iv, pw_status, pw_auditor1, pw_auditor2, pw_addTime FROM paper_wd
+        SELECT pw_id, pw_name, pw_create_by, pw_course, pw_address, pw_describe, pw_key, paper_type, iv, pw_status, pw_auditor1, pw_auditor2, pw_addTime FROM paper_wd
         WHERE pw_create_by = #{username} or pw_auditor1 = #{username} or pw_auditor2 = #{username}
     </select>
 
