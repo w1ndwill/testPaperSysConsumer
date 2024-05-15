@@ -411,7 +411,6 @@ export default {
                 arrayBuffer
             );
             const ivString = this.arrayBufferToBase64(iv);
-            console.log("ivString1:"+ivString)
             return { ciphertext, iv: ivString };
         },
 
@@ -427,7 +426,6 @@ export default {
 
         async getCryptoKeyString(cryptoKey) { // 获取密钥字符串
             const keyData = await window.crypto.subtle.exportKey('jwk', cryptoKey);
-            console.log("keyData:"+keyData.k)
             return keyData.k;
         },
 
@@ -484,7 +482,6 @@ export default {
             const encryptedFileBlob = new Blob([encryptedFileData.encrypted]);
             formData.append('file', encryptedFileBlob, this.filename);
             const response = await uploadto_server(formData);
-            console.log("response.fileUrl:", response.fileUrl);
             return response;
         },
 
@@ -493,7 +490,7 @@ export default {
             if (response != null) {
                 return response.publicKey;
             } else {
-                console.log('获取公钥失败：', response.message);
+                alert('获取公钥失败：' + response.message)
                 return null;
             }
         },
@@ -516,14 +513,11 @@ export default {
             formData2.append('auditor1', auditor1);
             formData2.append('auditor2', auditor2);
             formData2.append('course', course);
-            console.log("paperType" + paperType)
             const response = await save(formData2);
-            console.log("response:", response);
             return response;
         },
 
         handleCheck(row, approvedStatus) {
-            console.log("checkpreviewed:"+ this.previewed)
             if (this.previewed !== '1') {
                 this.$message.error('请先预览试题');
                 return;
@@ -551,9 +545,7 @@ export default {
                 return;
             }
             const publicKey = await this.getPublicKey(this.currentRow.pw_auditor2);
-            console.log("publicKey:"+publicKey)
             const encryptedAESKey = await this.encryptAESKeyWithPublicKey(publicKey, this.decryptedAESKey); // 使用公钥加密AES密钥
-            console.log("encryptedAESKey:"+encryptedAESKey)
 
             const params = {
                 auditor: auditor,

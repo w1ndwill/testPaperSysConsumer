@@ -113,7 +113,6 @@ export default {
             this.loading = true;
             const res = await query(keyOwner, this.query);
             this.loading = false;
-            console.log("res:"+res)
             if (res) {
                 this.tableData = [{
                     key_owner: localStorage.getItem('ms_username'),
@@ -126,8 +125,6 @@ export default {
             let keyOwner = localStorage.getItem('ms_username'); // 假设你将用户名存储在localStorage的'username'键下
             try {
                 let res = await generate(keyOwner, false); // 调用后端接口生成密钥对，不覆盖已有密钥
-                console.log("res:" + res)
-                console.log(" res.status " + res.status)
                 if (res.status === "409") { // 如果状态码是409
                     this.$confirm('密钥对已存在，是否覆盖?', '提示', {
                         confirmButtonText: '覆盖',
@@ -147,7 +144,6 @@ export default {
                     });
                 }
                 if (res.status !== "409" && res) {  // 如果状态码是200
-                    console.log(123)
                     this.keyPair.publicKey = res.publicKey; // 保存公钥
                     this.keyPair.privateKey = res.privateKey; // 保存私钥
                     this.keyDialogVisible = true; // 显示弹出框
