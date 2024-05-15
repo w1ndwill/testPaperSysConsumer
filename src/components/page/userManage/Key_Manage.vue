@@ -59,18 +59,6 @@
                 </div>
             </el-dialog>
 
-            <div class="pagination"> <!-- 分页 -->
-            <el-pagination
-                background
-                layout="total, sizes, prev, pager, next, jumper"
-                :current-page="query.page"
-                :page-size="query.pageSize"
-                :page-sizes="[5, 7, 10, 15, 20, 40, 100]"
-                :total="pageTotal"
-                @current-change="handlePageChange"
-                @size-change="handleSizeChange"
-            ></el-pagination>
-        </div>
         </div>
     </div>
 </template>
