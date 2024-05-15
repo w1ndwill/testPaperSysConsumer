@@ -2,7 +2,6 @@
     <div>
         <div id="testPaper">
             <div class="container">
-
                 <!-- 搜索栏 -->
                 <div class="handle-box">
                     <el-button @click="addTpDialog('手动生成试卷')" class="handle-del mr10" icon="el-icon-lx-add" type="primary">
@@ -51,6 +50,7 @@
                         class="handle-select mr8 query-margin"
                         @change="handleSearch"
                         v-model="isMy"
+                        v-show="false"
                     ></el-checkbox>
                     <el-input
                         @keyup.enter.native="handleSearch"
@@ -387,7 +387,7 @@ export default {
             rules,
             loading: true,
             courseList: [],
-            isMy: false,
+            isMy: true,
             query: {
                 tpName: '',
                 userId: localStorage.getItem('userId'),
@@ -417,7 +417,11 @@ export default {
         };
     },
     created() {
-        this.getData();
+        // this.getData();
+        this.handleSearch();
+    },
+    mounted() {
+        this.isMy = this.$route.query.isMy;
     },
     methods: {
         //======================= 试卷操作方法 ==============================================
@@ -456,7 +460,7 @@ export default {
         },
         // 触发搜索按钮
         handleSearch() {
-            this.query.tpCreateBy = this.isMy ? localStorage.getItem('userId') : '';
+            this.query.tpCreateBy = this.isMy ? localStorage.getItem('userId') : ''; //是否只查询自己创建的
             this.$set(this.query, 'page', this.query.page || 1);
             this.getData();
         },

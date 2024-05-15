@@ -48,7 +48,7 @@
                         :value="queBank.queBankId"
                     ></el-option>
                 </el-select>
-                <el-checkbox border label="自己创建的" class="mr8 query-margin" @change="handleSearch" v-model="isMy"></el-checkbox>
+                <el-checkbox border label="自己创建的" class="mr8 query-margin" @change="handleSearch" v-model="isMy" v-show="false"></el-checkbox>
                 <el-input
                     v-model="query.queContent"
                     placeholder="题目内容"
@@ -404,7 +404,7 @@ export default {
         return {
             rules,
             loading: true,
-            isMy: false,
+            isMy: true,
             query: {
                 isHidden: this._props.isHidden,
                 userId: localStorage.getItem('userId'),
@@ -478,7 +478,8 @@ export default {
         };
     },
     created() {
-        this.getData();
+        this.handleSearch();
+        // this.getData();
     },
     watch: {
         queVisible() {

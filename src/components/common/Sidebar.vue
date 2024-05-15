@@ -82,7 +82,8 @@ export default {
                 {
                     icon: 'el-icon-lx-read', //图标
                     index: 'course',
-                    title: '课程管理'
+                    title: '课程管理',
+                    hidden: this.getIsYuanZhang()
                     // subs: [
                     //     {
                     //         icon: 'el-icon-lx-read', //图标
@@ -272,6 +273,10 @@ export default {
         getIsAdmin() {
             console.log(localStorage.getItem('isAdmin'));
             return localStorage.getItem('isAdmin') !== '管理员';
+        },
+        getIsYuanZhang() {
+            console.log(localStorage.getItem('job'));
+            return localStorage.getItem('job') !== '3';
         }
     },
     created() {

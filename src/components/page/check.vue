@@ -11,7 +11,7 @@
                 header-cell-class-name="table-header"
                 ref="multipleTable"
                 v-loading="loading"
-                style="width: 92%"
+                style="width: 1600px"
             >
                 <el-table-column align="center" checked="true" type="selection" width="55"></el-table-column>
                 <el-table-column
@@ -48,7 +48,7 @@
                     align="center"
                     label="系级审核人"
                     prop="pw_auditor1"
-                    width="100"
+                    width="120"
                     header-class-name="header-style"
                 ></el-table-column>
                 <el-table-column
@@ -56,7 +56,7 @@
                     align="center"
                     label="院级审核人"
                     prop="pw_auditor2"
-                    width="100"
+                    width="120"
                     header-class-name="header-style"
                 ></el-table-column>
                 <el-table-column
@@ -70,7 +70,7 @@
                         <el-tag v-if="scope.row.pw_status === '0'" type="info">等待系级审核</el-tag>
                         <el-tag v-else-if="scope.row.pw_status === '10'" type="success">系级审核通过</el-tag>
                         <el-tag v-else-if="scope.row.pw_status === '20'" type="danger">系级审核拒绝</el-tag>
-                        <el-tag v-else-if="scope.row.pw_status === '11'" type="info">院级审核通过</el-tag>
+                        <el-tag v-else-if="scope.row.pw_status === '11'" type="success">院级审核通过</el-tag>
                         <el-tag v-else-if="scope.row.pw_status === '12'" type="danger">院级审核拒绝</el-tag>
                     </template>
                 </el-table-column>
@@ -86,7 +86,7 @@
                         <span v-else>等待审批</span>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="操作" width="150">
+                <el-table-column align="center" label="操作" width="120">
                     <template slot-scope="scope">
                         <el-dropdown
                         >
@@ -438,7 +438,12 @@ export default {
             const publicKey = await this.getPublicKey(this.form.selectAuditor1);
             const paperkey = await this.encryptAESKeyWithPublicKey(publicKey, paperkey1);
             const papercreateBy = localStorage.getItem('ms_username');
-            const papername = this.papername;
+            let paperCreateBy = localStorage.getItem('ms_username');
+            const papername = this.papername
+            if (this.form.selectAuditor1 === paperCreateBy || this.form.selectAuditor2 === paperCreateBy ) {
+                alert('请不要选择自己作为审核人');
+                return;
+            }
             const uploadResponse = await this.uploadToServer({
                 encryptedFileData: this.encryptedFileData,
             });
@@ -547,7 +552,6 @@ export default {
             }
             const publicKey = await this.getPublicKey(this.currentRow.pw_auditor2);
             console.log("publicKey:"+publicKey)
-            console.log("decryptedAESKey:"+this.decryptedAESKey)
             const encryptedAESKey = await this.encryptAESKeyWithPublicKey(publicKey, this.decryptedAESKey); // 使用公钥加密AES密钥
             console.log("encryptedAESKey:"+encryptedAESKey)
 
@@ -578,6 +582,7 @@ export default {
             const privateKey = new TextDecoder().decode(privateKeyBuffer); // 将ArrayBuffer转换为字符串
             const aesKeyString = row.pw_key;
             const decryptedAESKey = await this.decryptAESKeyWithPrivateKey(privateKey, aesKeyString); // 解密AES密钥
+            this.decryptedAESKey = decryptedAESKey;
             const AESBuffer = await this.importKeyFromBase64Url(decryptedAESKey); // 将AES密钥转换为ArrayBuffer
 
             const address = row.pw_address;

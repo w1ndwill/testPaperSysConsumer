@@ -57,7 +57,7 @@ export default {
             reSetPassVisible:false,
             param: {
                 userPhone: '17877184843',
-                password: 'qq2536',
+                password: '123456',
                 // rememberMe: true
             },
             paramSHA: {
@@ -101,6 +101,7 @@ export default {
                                 localStorage.setItem('photo', baseURL()+res.photo);
                                 localStorage.setItem('email', res.email);
                                 localStorage.setItem('sex', res.sex);
+                                localStorage.setItem('job', res.job);
                                 this.$router.push('/home');
                                 this.$message.success('登录成功');
                             } else {
