@@ -566,7 +566,20 @@ export default {
         },
 
         async handlePreview(row) {
-            // 从row中获取文件地址和AES密钥
+            let auditor = this.getUserName();
+            if (auditor === this.currentRow.pw_auditor1) {
+                if (this.currentRow.pw_status === '10' || this.currentRow.pw_status === '11' || this.currentRow.pw_status === '12') {
+                    this.$message.error('当前状态下，你没有预览权限');
+                    return;
+                }
+            }
+            if (auditor === this.currentRow.pw_auditor2) {
+                if (this.currentRow.pw_status === '0') {
+                    this.$message.error('当前状态下，你没有预览权限');
+                    return;
+                }
+            }
+                // 从row中获取文件地址和AES密钥
             // const privateKeyFile = await this.selectPrivateKeyFile(); // 选择私钥文件
             this.$message.info('请选择您的RSA私钥');
             const privateKeyFile = await this.selectPrivateKeyFile(); // 选择私钥文件

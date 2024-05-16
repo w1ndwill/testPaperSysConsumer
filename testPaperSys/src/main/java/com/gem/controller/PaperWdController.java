@@ -64,7 +64,7 @@ public class PaperWdController {
             String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
             System.out.println("uniqueFileName:"+uniqueFileName);
             // 获取或创建上传目录（假设在项目根目录下的uploads文件夹）
-            File uploadDirectory = new File("D:\\JavaEE_project\\graduation-project-master\\testPaperSysConsumer\\testPaperSys\\src\\main\\resources\\static\\uploads");
+            File uploadDirectory = new File("D:\\JavaEE_project\\Paper\\testPaperSys\\src\\main\\resources\\static\\uploads");
             if (!uploadDirectory.exists()) {
                 uploadDirectory.mkdirs();
             }

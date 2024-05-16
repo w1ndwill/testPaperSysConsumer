@@ -421,6 +421,12 @@ export default {
             if (this.user.job === '3') {
                 this.user.isAdmin = 'Y';
             }
+            if (this.user.isAdmin === '管理员') {
+                this.user.isAdmin = 'Y';
+            }
+            if (this.user.isAdmin === '教师') {
+                this.user.isAdmin = 'N';
+            }
             this.user.sex === '男' ? (this.user.sex = 1) : this.user.sex === '女' ? (this.user.sex = 0) : this.user.sex;
             if (this.user.password && this.user.password.length > 0) {
                 this.user.password = md5(this.user.password);
