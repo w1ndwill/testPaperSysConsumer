@@ -40,7 +40,7 @@
                     align="center"
                     label="申请人"
                     prop="pw_create_by"
-                    width="100"
+                    width="150"
                     header-class-name="header-style"
                 ></el-table-column>
                 <el-table-column
@@ -48,7 +48,7 @@
                     align="center"
                     label="系级审核人"
                     prop="pw_auditor1"
-                    width="120"
+                    width="150"
                     header-class-name="header-style"
                 ></el-table-column>
                 <el-table-column
@@ -56,7 +56,7 @@
                     align="center"
                     label="院级审核人"
                     prop="pw_auditor2"
-                    width="120"
+                    width="150"
                     header-class-name="header-style"
                 ></el-table-column>
                 <el-table-column
@@ -604,6 +604,8 @@ export default {
             const encryptedFileArrayBuffer = await response.arrayBuffer();
             // 使用AES密钥解密文件内容
             const decryptedFileArrayBuffer = await this.decryptFileContent(encryptedFileArrayBuffer, AESBuffer, iv);
+
+            const pw_name = row.pw_name;
 
             if (row.pw_type === 'Word') {
                 const decryptedFileBlob = new Blob([decryptedFileArrayBuffer], { type: 'application/msword' });
