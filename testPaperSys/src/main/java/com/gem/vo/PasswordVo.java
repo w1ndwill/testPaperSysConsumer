@@ -3,14 +3,6 @@ package com.gem.vo;
 import lombok.Data;
 import lombok.ToString;
 
-/**
- * Date : 2021/1/27 8:28
- * package: com.gem.vo
- * ClassName : PasswordVo
- * 描述:
- *
- * @author QAQ
- */
 @Data
 @ToString
 public class PasswordVo {

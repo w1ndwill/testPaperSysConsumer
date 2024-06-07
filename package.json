@@ -54,7 +54,8 @@
     "vue-router": "^3.0.3",
     "vue-schart": "^2.0.0",
     "vuedraggable": "^2.17.0",
-    "webpack-md5-hash": "0.0.6"
+    "webpack-md5-hash": "0.0.6",
+    "winston": "^3.13.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.9.0",
