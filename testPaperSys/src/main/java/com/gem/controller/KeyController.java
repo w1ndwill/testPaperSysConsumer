@@ -5,6 +5,8 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,8 @@ import com.gem.utils.RedisService;
 import com.gem.utils.StringUtil;
 import com.gem.vo.TableVo;
 import org.apache.tomcat.util.json.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +37,11 @@ public class KeyController {
     @Autowired
     private RedisService redisService;
 
+    // 日志
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    // 获取当前时间
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String currentTime = LocalDateTime.now().format(formatter);
     @RequestMapping("/queryKey")
     public String queryKey(String keyOwner) {
         System.out.println("keyOwner: " + keyOwner);
@@ -64,6 +73,7 @@ public class KeyController {
         Map<String, String> keys = new HashMap<>();
         keys.put("publicKey", result.get("publicKey"));
         keys.put("privateKey", result.get("privateKey"));
+        logger.info("用户 " + keyOwner + "于" + currentTime + "更新密钥对成功");
         return new ResponseEntity<>(keys, HttpStatus.OK);
     }
 
