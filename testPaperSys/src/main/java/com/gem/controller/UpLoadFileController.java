@@ -1,5 +1,6 @@
 package com.gem.controller;
 
+import com.gem.utils.RSAKeyUtil;
 import org.apache.velocity.shaded.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -8,6 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +30,23 @@ public class UpLoadFileController {
 	
 	@Value("${server.port}")
 	private String port;
-	
+
+
+	//上传文件
+	public byte[] uploadFile(InputStream file){
+		//调用RSAKeyUtil对文件进行加密
+		try {
+			byte[] bytes = file.readAllBytes();
+			byte[] encrypt = RSAKeyUtil.encrypt(bytes);
+
+
+			return encrypt;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
 	@RequestMapping("/photo")
 	public Map<String,Object> uploadPhoto(MultipartFile file){
 		Map<String, Object> map = new HashMap<>();

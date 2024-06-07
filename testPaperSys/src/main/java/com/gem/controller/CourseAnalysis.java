@@ -19,6 +19,7 @@ import java.util.List;
  * ClassName : CourseAnalysis
  * 描述:课程分析
  **/
+
 @RestController
 @CrossOrigin  //解决跨域问题
 @RequestMapping("/CourseAnalysis")
