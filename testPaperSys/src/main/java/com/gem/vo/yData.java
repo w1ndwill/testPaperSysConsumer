@@ -4,12 +4,7 @@ import lombok.Data;
 
 import java.util.Random;
 
-/**
- * Date : 2021/3/6 13:30
- * package: com.gem.vo
- * ClassName : yData
- * 描述:
- **/
+
 @Data
 public class yData {
 	/**

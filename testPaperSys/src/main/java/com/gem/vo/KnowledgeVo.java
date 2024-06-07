@@ -12,14 +12,6 @@ import lombok.NoArgsConstructor;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Date : 2021/1/29 10:11
- * package: com.gem.vo
- * ClassName : KnowledgeVo
- * 描述:
- *
- * @author QAQ
- */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value = "KnowledgeVo对象", description = "")

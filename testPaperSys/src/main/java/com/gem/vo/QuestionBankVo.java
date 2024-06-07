@@ -15,14 +15,6 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * <p>
- *
- * </p>
- *
- * @author 2536320610@qq.com
- * @since 2021-01-21
- */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value = "QuestionBankVo对象", description = "")

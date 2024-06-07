@@ -5,14 +5,7 @@ import lombok.ToString;
 
 import java.util.List;
 
-/**
- * Date : 2021/1/21 11:06
- * package: com.gem.vo
- * ClassName : TableVO
- * 描述:
- *
- * @author QAQ
- */
+
 @Data
 @ToString
 public class TableVo< T > {

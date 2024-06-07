@@ -13,14 +13,6 @@ import lombok.ToString;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Date : 2021/1/23 14:30
- * package: com.gem.vo
- * ClassName : CourseVo
- * 描述:
- *
- * @author QAQ
- */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value = "CourseVo对象", description = "")
