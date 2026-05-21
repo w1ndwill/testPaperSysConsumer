@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "asn1js": "^3.0.5",
-    "axios": "^0.30.3",
+    "axios": "^0.31.1",
     "babel-polyfill": "^6.26.0",
     "crypto-js": "^4.2.0",
     "docxtemplater": "^3.20.1",
